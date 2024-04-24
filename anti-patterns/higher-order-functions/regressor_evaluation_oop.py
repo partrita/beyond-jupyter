@@ -18,7 +18,9 @@ class Metric(ABC):
         return self.get_name()
 
     @abstractmethod
-    def compute_value(self, y_ground_truth: np.ndarray, y_predicted: np.ndarray) -> float:
+    def compute_value(
+        self, y_ground_truth: np.ndarray, y_predicted: np.ndarray
+    ) -> float:
         """
         :param y_ground_truth: the ground truth values
         :param y_predicted: the model's predictions
@@ -43,7 +45,9 @@ class Metric(ABC):
 
 
 class MetricMeanAbsError(Metric):
-    def compute_value(self, y_ground_truth: np.ndarray, y_predicted: np.ndarray) -> float:
+    def compute_value(
+        self, y_ground_truth: np.ndarray, y_predicted: np.ndarray
+    ) -> float:
         return metrics.mean_absolute_error(y_ground_truth, y_predicted)
 
     def get_name(self) -> str:
@@ -54,7 +58,9 @@ class MetricMeanAbsError(Metric):
 
 
 class MetricR2(Metric):
-    def compute_value(self, y_ground_truth: np.ndarray, y_predicted: np.ndarray) -> float:
+    def compute_value(
+        self, y_ground_truth: np.ndarray, y_predicted: np.ndarray
+    ) -> float:
         return metrics.r2_score(y_ground_truth, y_predicted)
 
     def get_name(self) -> str:
@@ -68,7 +74,9 @@ class MetricRelFreqErrorWithin(Metric):
     def __init__(self, max_error: float):
         self.max_error = max_error
 
-    def compute_value(self, y_ground_truth: np.ndarray, y_predicted: np.ndarray) -> float:
+    def compute_value(
+        self, y_ground_truth: np.ndarray, y_predicted: np.ndarray
+    ) -> float:
         cnt = 0
         for y1, y2 in zip(y_ground_truth, y_predicted):
             if abs(y1 - y2) <= self.max_error:
@@ -82,13 +90,15 @@ class MetricRelFreqErrorWithin(Metric):
         return True
 
 
-def evaluate_models(models,
-        X: pd.DataFrame,
-        y: pd.Series,
-        metric: Metric,
-        random_state: int = 42,
-        shuffle: bool = True,
-        test_size=0.25) -> pd.DataFrame:
+def evaluate_models(
+    models,
+    X: pd.DataFrame,
+    y: pd.Series,
+    metric: Metric,
+    random_state: int = 42,
+    shuffle: bool = True,
+    test_size=0.25,
+) -> pd.DataFrame:
     """
     Fits and evaluates the given model, collecting the evaluation results.
 
@@ -105,8 +115,9 @@ def evaluate_models(models,
         of quality
     """
     log.info(f"Evaluating {len(models)} models with {metric.get_name()}")
-    X_train, X_test, y_train, y_test = train_test_split(X, y,
-        random_state=random_state, test_size=test_size, shuffle=shuffle)
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, random_state=random_state, test_size=test_size, shuffle=shuffle
+    )
     result_rows = []
     for model in models:
         log.info(f"Fitting {model}")
@@ -115,7 +126,9 @@ def evaluate_models(models,
         metric_value = metric.compute_value(y_test, y_pred)
         log.info(f"{model}: {metric.get_name()}={metric_value:.3f}")
         result_rows.append({"model": str(model), metric.get_name(): metric_value})
-    return pd.DataFrame(result_rows).sort_values(metric.get_name(), ascending=not metric.is_larger_better())
+    return pd.DataFrame(result_rows).sort_values(
+        metric.get_name(), ascending=not metric.is_larger_better()
+    )
 
 
 def main():
@@ -123,17 +136,19 @@ def main():
     X, y = dataset.load_xy_projected_scaled()
 
     models = [
-        LogisticRegression(solver='lbfgs', max_iter=1000),
+        LogisticRegression(solver="lbfgs", max_iter=1000),
         KNeighborsRegressor(n_neighbors=1),
         DecisionTreeRegressor(random_state=42, max_depth=2),
-        RandomForestRegressor(n_estimators=100)
+        RandomForestRegressor(n_estimators=100),
     ]
 
     # evaluate models
     max_error = 10
-    evaluation_result_df = evaluate_models(models, X, y, MetricRelFreqErrorWithin(max_error))
+    evaluation_result_df = evaluate_models(
+        models, X, y, MetricRelFreqErrorWithin(max_error)
+    )
     log.info(f"Results:\n{evaluation_result_df}")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     logging.run_main(main)

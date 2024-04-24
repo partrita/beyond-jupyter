@@ -11,9 +11,11 @@ def main():
     dataset = Dataset(10000)
     X, y = dataset.load_xy_projected_scaled()
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=42, test_size=0.3, shuffle=True)
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, random_state=42, test_size=0.3, shuffle=True
+    )
 
-    log_reg = linear_model.LogisticRegression(solver='lbfgs', max_iter=1000)
+    log_reg = linear_model.LogisticRegression(solver="lbfgs", max_iter=1000)
     log_reg.fit(X_train, y_train)
     y_pred = log_reg.predict(X_test)
     mae = metrics.mean_absolute_error(y_test, y_pred)
@@ -38,5 +40,5 @@ def main():
     print(f"DecisionTreeRegressor: MAE={mae:.1f}")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

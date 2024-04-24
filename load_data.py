@@ -19,12 +19,13 @@ Usage:
     python load_data.py
 
 """
+
 import os
 from kaggle import KaggleApi
 
 script_folder = os.path.dirname(os.path.abspath(__file__))
 destination_path = os.path.join(script_folder, "data")
-dataset_name = 'amitanshjoshi/spotify-1million-tracks'
+dataset_name = "amitanshjoshi/spotify-1million-tracks"
 
 
 def load_via_kaggle():

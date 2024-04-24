@@ -1,326 +1,314 @@
-# Making Use of IDE Features
+# IDE 기능 활용
 
-Knowing your integrated development environment (IDE) well and using it to its full potential is essential in speeding up the development process and can greatly reduce the potential for errors.
-In the following, we will specifically address Python development using **JetBrains IDEs** (i.e. PyCharm and IntelliJ IDEA) and **Microsoft Visual Studio Code** (aka VSCode).
+IDE 기능을 잘 알고 그것을 최대한 활용하는 것은 개발 프로세스를 가속화하는 데 필수적이며 오류 가능성을 크게 줄일 수 있습니다.이어지는 내용에서는 특히 **JetBrains IDEs** (즉, PyCharm 및 IntelliJ IDEA)와 **Microsoft Visual Studio Code** (이하 VSCode)를 사용한 Python 개발에 대해 구체적으로 다룰 것입니다.
 
 <!-- generated with `markdown-toc -i README.md` -->
 
 <!-- toc -->
 
-- [Type Annotations](#type-annotations)
-- [Navigating and Understanding the Code](#navigating-and-understanding-the-code)
-  * [Finding Usages](#finding-usages)
-  * [Go to Definition](#go-to-definition)
-  * [Search](#search)
-    + [Type Search](#type-search)
-    + [File Search](#file-search)
-    + [Substring Search](#substring-search)
-  * [Class Hierarchy Display](#class-hierarchy-display)
-  * [Structure/Outline View](#structureoutline-view)
-  * [Structure/Outline-Based Navigation](#structureoutline-based-navigation)
-  * [Forward/Backward Navigation](#forwardbackward-navigation)
-  * [Recently/Previously Used Files/Editors](#recentlypreviously-used-fileseditors)
-- [Editing](#editing)
-  * [Auto-Completions](#auto-completions)
-    + [Identifier Auto-Completion](#identifier-auto-completion)
-    + [Type-Based Auto-Completion](#type-based-auto-completion)
-  * [Getting Help](#getting-help)
-    + [Display Documentation](#display-documentation)
-    + [Show Parameter Information](#show-parameter-information)
-  * [Refactoring](#refactoring)
-    + [Renaming](#renaming)
-    + [Moving a Component to Another Module](#moving-a-component-to-another-module)
-    + [Extracting a Method/Local Variable](#extracting-a-methodlocal-variable)
-    + [Extracting a Local Variable](#extracting-a-local-variable)
-  * [Basic Editing](#basic-editing)
+- [IDE 기능 활용](#ide-기능-활용)
+  - [유형 주석](#유형-주석)
+  - [코드 내비게이션 및 이해](#코드-내비게이션-및-이해)
+    - [사용처 찾기](#사용처-찾기)
+    - [정의로 이동](#정의로-이동)
+    - [검색](#검색)
+      - [유형 검색](#유형-검색)
+      - [파일 검색](#파일-검색)
+      - [부분 문자열 검색](#부분-문자열-검색)
+    - [클래스 계층 구조 표시](#클래스-계층-구조-표시)
+    - [구조/개요 보기](#구조개요-보기)
+    - [구조/개요 기반 탐색](#구조개요-기반-탐색)
+    - [앞/뒤로 탐색](#앞뒤로-탐색)
+    - [최근/이전에 사용한 파일/편집기](#최근이전에-사용한-파일편집기)
+    - [편집](#편집)
+    - [자동 완성](#자동-완성)
+      - [식별자 자동 완성](#식별자-자동-완성)
+      - [유형 기반 자동 완성](#유형-기반-자동-완성)
+    - [도움말 가져오기](#도움말-가져오기)
+      - [문서 표시](#문서-표시)
+      - [매개변수 정보 표시](#매개변수-정보-표시)
+    - [리팩터링](#리팩터링)
+      - [이름 변경](#이름-변경)
+      - [구성 요소를 다른 모듈로 이동](#구성-요소를-다른-모듈로-이동)
+      - [메서드/로컬 변수 추출](#메서드로컬-변수-추출)
+      - [로컬 변수 추출](#로컬-변수-추출)
+    - [기본 편집](#기본-편집)
 
 <!-- tocstop -->
 
-## Type Annotations
+## 유형 주석
 
-Python is a dynamically typed language, but the addition of type hints can greatly enhance the assistance functions that can be provided.
-Especially in larger software projects, it is imperative that all interfaces be type-annotated, as type hints critically support
+파이썬은 동적으로 유형이 지정되는 언어이지만 유형 힌트의 추가는 제공할 수 있는 지원 기능을 크게 향상시킬 수 있습니다. 특히 대규모 소프트웨어 프로젝트에서는 모든 인터페이스가 유형 주석이 달려 있어야 합니다. 유형 힌트는 다음과 같은 중요한 지원 기능을 제공합니다.
 
-  * [**usage discovery**](#finding-usages) and, by extension, [**refactoring/renaming**](#renaming)
+- [**사용 찾기**](#finding-usages) 및 이를 확장한 [**리팩토링/이름 바꾸기**](#renaming)
+  - IDE가 모든 식별자의 유형을 알고 있으면 해당 식별자가 사용되는 모든 위치를 찾을 수 있습니다. 요청시 IDE는 쉽게 해당 식별자가 사용된 모든 위치를 표시하고, 또한 리팩토링 (예: 이름 바꾸기 또는 다른 위치로 이동)을 지원하여 모든 참조를 자동으로 업데이트할 수 있습니다.
 
-    If the type of every identifier is known to your IDE, this critically enables the discovery of all places in which a type, function or variable is being used.
-    Upon request, the IDE can thus easily display all places in which the respective identifier is being used and can, furthermore, assist in refactoring it (e.g. renaming it or moving it to a different place), updating all references automatically.
+- [**유형 기반 자동 완성**](#type-based-auto-completion)
+  - 모든 변수의 유형이 알려진 경우 IDE는 특히 특정 객체에서 지원되는 메서드를 표시하고 자동 완성하며 필요한 인수에 대한 정보를 직접 제공할 수 있습니다. 이로써 외부 문서를 읽거나 호출되는 함수의 소스 코드를 검사할 필요가 없어집니다. 이것은 효율성을 크게 향상시킵니다.
 
-  * [**type-based auto-completion**](#type-based-auto-completion)
+- **정적 유형 분석**
+  - 알려진 유형을 사용하면 IDE (및 다른 정적 분석 도구)가 함수에 전달되거나 반환되는 유형이 예상되는 유형인지 여부를 결정할 수 있습니다. 오류는 입력하는 동안 표시될 수 있습니다.
 
-    With the type of every variable being known, the IDE can display, in particular, the methods that are supported by a particular object and can auto-complete them and furthermore directly provide information on the arguments that are required. This eliminates the need to read external documentation or inspect the source code of the function being called. This greatly increases efficiency.
+- **인터페이스 문서화**
+  - 유형은 인터페이스를 문서화하는 데 도움이 되며 종종 추가 설명이 필요하지 않습니다.
 
-  * **static type analysis**
+## 코드 내비게이션 및 이해
 
-    With known types, the IDE (and other static analysis tools) can determine whether the types you are passing to or returning from functions match the expected types; errors can be displayed as you type.
+### 사용처 찾기
 
-  * **interface documentation**
-    
-    Types help to document an interface and often completely eliminate the need for further explanations.
-    
+식별자/함수가 사용된 위치를 빠르게 찾을 수 있는 것은 해당 코드가 어떻게/왜 사용되는지를 이해하는 데 필수적입니다. 코드가 어떻게 작동하는지 깊이 이해하는 데 중요할 수 있습니다.
 
-## Navigating and Understanding the Code
+![사용처 찾기](res/find_usages_intellij.png)
 
-### Finding Usages
-
-Being able to quickly find places where an identifier/function is being used is essential when trying to determine how/whether the respective code is being used.
-It can be critical in gaining a deep understanding of how the code works.
-
-![Find Usages](res/find_usages_intellij.png)
-
-| IDE       | Shortcut                                           |
+| IDE       | 단축키                                             |
 | --------- |----------------------------------------------------|
-| JetBrains | Ctrl+B (Cmd+B) or Ctrl+Left-Click (Cmd+Left-Click) |
+| JetBrains | Ctrl+B (Cmd+B) 또는 Ctrl+좌클릭 (Cmd+좌클릭)        |
 | VSCode    | Alt+Shift+F12 (Opt+Shift+F12)                      |
 
-### Go to Definition
+### 정의로 이동
 
-When an identifier is in front of you, navigating to the code that defines it can be helpful in order to find out more about it.
+식별자가 있는 위치에서 해당 식별자를 정의하는 코드로 이동할 수 있으면 해당 코드에 대해 자세히 알아내는 데 도움이 됩니다.
 
-| IDE       | Shortcut                                           |
+| IDE       | 단축키                                             |
 | --------- |----------------------------------------------------|
-| JetBrains | Ctrl+B (Cmd+B) or Ctrl+Left-Click (Cmd+Left-Click) |
-| VSCode    | F12 or Ctrl+Left-Click (Cmd+Left-Click)            |
+| JetBrains | Ctrl+B (Cmd+B) 또는 Ctrl+좌클릭 (Cmd+좌클릭)        |
+| VSCode    | F12 또는 Ctrl+좌클릭 (Cmd+좌클릭)                 |
 
-### Search
+### 검색
 
-Searching the entire code base in your IDE for specific elements allows you to quickly navigate to the respective
-pieces of code and thus speeds up your overall workflow.
+IDE에서 전체 코드 베이스를 특정 요소에 대해 검색하면 해당 코드 조각으로 빠르게 이동할 수 있으므로 전체적인 작업 흐름이 빨라집니다.
 
-#### Type Search
+#### 유형 검색
 
-Sometimes you know the name of the type/class you are looking for but not its precise location (within the entire project, including dependencies).
+때로는 유형/클래스의 이름은 알지만 해당 위치(프로젝트 전체 및 의존성 포함)를 모를 수 있습니다.
 
-| IDE       | Shortcut       |
-| --------- |----------------|
+| IDE       | 단축키       |
+| --------- |-------------|
 | JetBrains | Ctrl+N (Cmd+N) |
-| VSCode    | n/a            |
+| VSCode    | 사용불가     |
 
-#### File Search
+#### 파일 검색
 
-Directly searching for filenames can be much faster than looking for a file's location in the project's folder structure.
+파일 이름을 직접 검색하는 것이 프로젝트 폴더 구조에서 파일의 위치를 찾는 것보다 훨씬 빠를 수 있습니다.
 
-| IDE       | Shortcut                   |
-| --------- |----------------------------|
-| JetBrains | Ctrl+Shift+N (Cmd+Shift+N) |
-| VSCode    | Ctrl+P (Cmd+P)             |
+| IDE       | 단축키                         |
+| --------- |------------------------------|
+| JetBrains | Ctrl+Shift+N (Cmd+Shift+N)   |
+| VSCode    | Ctrl+P (Cmd+P)                |
 
-#### Substring Search
+#### 부분 문자열 검색
 
-Sometimes we want to search for the occurrences of string literals/code snippets.
+때로는 문자열 리터럴/코드 조각의 발생을 검색하고자 할 수 있습니다.
 
-| IDE       | Shortcut                           |
-| --------- |------------------------------------|
-| JetBrains | Ctrl+Shift+F                       |
-| VSCode    | Ctrl+Shift+F (Cmd+Shift+F)         |
+| IDE       | 단축키                           |
+| --------- |--------------------------------|
+| JetBrains | Ctrl+Shift+F                     |
+| VSCode    | Ctrl+Shift+F (Cmd+Shift+F)       |
 
-Note, however, that, in most cases, this type of feature should not be used to search and replace code occurrences.
-Whenever possible, a dedicated [refactoring function](#refactoring) should be used instead, as it is both quicker and significantly more failsafe, provided that type annotations are applied rigorously.
+그러나 대부분의 경우 이러한 기능을 사용하여 코드 발생을 검색 및 대체해서는 안 됩니다. 가능한 경우, 엄격하게 유형 주석을 적용했을 때 훨씬 빠르고 훨씬 안전한 [리팩터링 기능](#리팩터링)을 대신 사용해야 합니다.
 
-### Class Hierarchy Display
+어떤 IDE를 사용하든, 이러한 코드 내비게이션 기능을 적극적으로 활용하여 코드를 탐색하고 이해하는 것이 개발 과정을 더욱 효율적으로 만들어 줄 것입니다.
 
-Displaying the place of a given type we are currently faced with in the hierarchy of classes can be essential in determining its role:
-Which classes is it based on and which classes does it inherit from it?
+### 클래스 계층 구조 표시
 
-This is the hierarchy of the `Metric` class from the earlier example:
+현재 직면한 특정 유형의 위치를 클래스 계층 구조에서 표시하는 것은 해당 역할을 결정하는 데 중요할 수 있습니다. 이 유형이 기반으로 하는 클래스와 어떤 클래스에서 상속을 받는지를 파악할 수 있습니다.
 
-![Type Hierarchy for the Metric Class](res/hierarchy_intellij.png)
+이것은 이전 예제의 `Metric` 클래스의 계층 구조입니다:
 
-| IDE       | Shortcut                  |
+![Metric 클래스의 유형 계층 구조](res/hierarchy_intellij.png)
+
+| IDE       | 단축키                  |
 | --------- |---------------------------|
 | JetBrains | Ctrl+H                    |
 | VSCode    | Alt+Shift+H (Opt+Shift+H) |
 
-### Structure/Outline View
+### 구조/개요 보기
 
-The structure/outline view can provide a quick overview of a module's content, and it can also be used to navigate within the file by clicking on its elements.
+구조/개요 보기는 모듈 내용의 빠른 개요를 제공할 수 있으며 파일 내에서 요소를 클릭하여 탐색하는 데도 사용할 수 있습니다.
 
-![Structure View](res/structure_view_navigation_intellij.gif)
+![구조 보기](res/structure_view_navigation_intellij.gif)
 
-Opening the structure view can be especially helpful for larger modules that contain a multitude of (top-level) definitions.
+구조 보기를 열면 (최상위) 정의가 많은 대규모 모듈에서 특히 도움이 될 수 있습니다.
 
-| IDE       | Shortcut                                    |
+| IDE       | 단축키                                    |
 | --------- |---------------------------------------------|
 | JetBrains | Alt+7 (Cmd+7)                               |
-| VSCode    | In Sidebar. Shortcut can be set in Settings |
+| VSCode    | 사이드바에서. 설정에서 단축키 설정 가능 |
 
-In JetBrains IDEs, the view can 
-  * optionally be sorted lexicographically,
-  * be extended to show elements inherited from base classes,
-  * be configured to highlight the element corresponding to the current cursor position,
-which further enhances the usability (see buttons in top toolbar).
+JetBrains IDE에서 뷰는 선택적으로 사전순으로 정렬될 수 있으며, 기본 클래스에서 상속받은 요소를 표시하는 데 사용하거나 현재 커서 위치에 해당하는 요소를 강조 표시할 수도 있습니다.
 
-### Structure/Outline-Based Navigation
+### 구조/개요 기반 탐색
 
-Especially in larger files, being able to quickly navigate to elements of the module structure by typing in part of the respective name can be very efficient.
+특히 큰 파일에서 해당 이름 일부를 입력하여 모듈 구조의 요소로 빠르게 이동할 수 있는 것이 매우 효율적입니다.
 
-![Structure Search](res/structure_search_navigation_intellij.gif)
+![구조 검색](res/structure_search_navigation_intellij.gif)
 
-| IDE       | Shortcut                   |
+| IDE       | 단축키                   |
 | --------- |----------------------------|
 | JetBrains | Ctrl+F12 (Cmd+F12)         |
 | VSCode    | Ctrl+Shift+O (Cmd+Shift+O) |
 
-### Forward/Backward Navigation
+### 앞/뒤로 탐색
 
-When jumping between positions in the code (e.g. in conjunction with "go to definition"), it is important to be able to quickly jump back and forth between recent cursor/editing positions.
+코드 내에서 위치를 이동할 때 (예: "정의로 이동"과 함께), 최근 커서/편집 위치 간을 빠르게 전환할 수 있어야 합니다.
 
-| IDE       | Shortcut                                 |
+| IDE       | 단축키                                 |
 | --------- |------------------------------------------|
 | JetBrains | Ctrl+Alt+Left/Right (Cmd+Opt+Left/Right) |
 | VSCode    | Alt+Left/Right (Opt+Left/Right)          |
 
-### Recently/Previously Used Files/Editors
+### 최근/이전에 사용한 파일/편집기
 
-When jumping between files, being able to quickly return to a previous file (without using the mouse to click on a tab) can be very efficient.
+파일 간 이동 시 이전 파일로 빠르게 돌아가는 것이 (탭을 클릭하지 않고) 매우 효율적일 수 있습니다.
 
-| IDE       | Shortcut                    |
+| IDE       | 단축키                    |
 | --------- |-----------------------------|
 | JetBrains | Ctrl+E (Cmd+E)              |
 | VSCode    | Ctrl+Tab (Cmd+Tab)          |
 
-## Editing
+### 편집
 
-### Auto-Completions
+### 자동 완성
 
-Auto-completion helps save time by not requiring the developer to type out the names of identifiers.
+자동 완성은 개발자가 식별자의 이름을 직접 입력할 필요 없이 시간을 절약할 수 있습니다.
 
-#### Identifier Auto-Completion
+#### 식별자 자동 완성
 
-![Identifier-Based Completion](res/autocompletion_general_intellij.gif)
+![식별자 기반 완성](res/autocompletion_general_intellij.gif)
 
-**Auto-completion of local identifiers** (from the current Python module):
+**로컬 식별자의 자동 완성** (현재 Python 모듈에서):
 
-| IDE       | Shortcut  |
-| --------- | --------- |
-| JetBrains | just start typing or explicitly request via Ctrl+Space |
-| VSCode    | just start typing |
+| IDE       | 단축키  |
+| --------- | ------- |
+| JetBrains | 타이핑 시작하거나 명시적으로 Ctrl+Space로 요청 |
+| VSCode    | 타이핑 시작하기 |
 
-**Auto-completion (with auto-import) of identifiers in the entire project**, including external dependencies:
+**전체 프로젝트**에서 식별자의 자동 완성 (자동 가져오기 포함):
 
-| IDE       | Shortcut           |
-| --------- |--------------------|
-| JetBrains | Ctrl+Space+Space   |
-| VSCode    | just start typing  |
+| IDE       | 단축키          |
+| --------- |---------------|
+| JetBrains | Ctrl+Space+Space |
+| VSCode    | 타이핑 시작하기  |
 
-In VSCode, auto-import will not happen by default; it has to be enabled in settings.
+VSCode에서는 자동 가져오기가 기본적으로 활성화되지 않습니다. 설정에서 활성화해야 합니다.
 
-#### Type-Based Auto-Completion
+#### 유형 기반 자동 완성
 
-With the types of identifiers being known, the IDE can directly auto-complete the functions and attribute the respective object supports.
+식별자의 유형을 알고 있으면 IDE가 해당 객체가 지원하는 함수 및 속성을 직접 자동 완성할 수 있습니다.
 
-![Type-Based Auto-Completion](res/autocompletion_type-based.gif)
+![유형 기반 자동 완성](res/autocompletion_type-based.gif)
 
-| IDE       | Shortcut                                                           |
-| --------- |--------------------------------------------------------------------|
-| JetBrains | type `.` after the identifier or explicitly request via Ctrl+Space |
-| VSCode    | type `.` after the identifier                                      |
+| IDE       | 단축키                                                           |
+| --------- |----------------------------------------------------------------|
+| JetBrains | 식별자 뒤에 `.` 입력하거나 명시적으로 Ctrl+Space로 요청 |
+| VSCode    | 식별자 뒤에 `.` 입력하기                                         |
 
 
-### Getting Help
+### 도움말 가져오기
 
-When writing code, it is essential to know what exactly functions do and how the parameters are interpreted,
-and ideally, the functions you call are well-documented.
+코드를 작성할 때 함수가 정확히 무엇을 하는지와 매개변수가 어떻게 해석되는지를 알아야 합니다.
+이상적으로 호출하는 함수가 잘 문서화되어 있어야 합니다.
 
-#### Display Documentation
+#### 문서 표시
 
-Getting an inline display of the documentation of a function/type is the fastest way to obtain the information you need.
+함수/유형의 문서를 인라인으로 표시하면 필요한 정보를 빠르게 얻을 수 있습니다.
 
-![Show Documentation Popup](res/docs-popup-intellij.png)
+![문서 팝업 표시](res/docs-popup-intellij.png)
 
-| IDE       | Shortcut           |
-| --------- |--------------------|
-| JetBrains | Ctrl+Q (Cmd+Q)     |
+| IDE       | 단축키           |
+| --------- |----------------|
+| JetBrains | Ctrl+Q (Cmd+Q) |
 | VSCode    | Ctrl+K+I (Cmd+K+I) |
 
-#### Show Parameter Information
+#### 매개변수 정보 표시
 
-When the initial auto-popup, which typically is triggered by typing an opening parenthesis, is no longer present, we can trigger the parameter information display within a parameter list explicitly.
+일반적으로 열린 괄호를 입력하면 자동으로 트리거되는 초기 자동 팝업이 더 이상 표시되지 않을 때 매개변수 정보 표시를 명시적으로 트리거할 수 있습니다.
 
-![Parameter Info](res/parameter-info-intellij.png)
+![매개변수 정보](res/parameter-info-intellij.png)
 
-| IDE       | Shortcut                           |
-| --------- |------------------------------------|
-| JetBrains | Ctrl+P (Cmd+P)                     |
+| IDE       | 단축키                             |
+| --------- |----------------------------------|
+| JetBrains | Ctrl+P (Cmd+P)                   |
 | VSCode    | Ctrl+Shift+Space (Cmd+Shift+Space) |
 
-### Refactoring
+### 리팩터링
 
-Whenever possible, refactoring operations should always be performed via the IDE's dedicated refactoring functions,
-as this will critically ensure that all references are appropriately updated - provided that all references are known through type annotations.
+가능한 한 리팩터링 작업은 항상 IDE의 전용 리팩터링 기능을 통해 수행해야 합니다.
+이는 모든 참조가 적절하게 업데이트되도록 하는 중요한 역할을 합니다 - 모든 참조가 유형 주석을 통해 알려진 경우에만 해당됩니다.
 
-#### Renaming
+#### 이름 변경
 
-Your IDE supports you, when you would like to rename a component in your code base. It consistently
-adapts usages throughout your codebase.
+코드베이스에서 구성 요소의 이름을 바꾸려는 경우 IDE가 지원합니다. 일관되게
+코드베이스 전체의 사용을 적응시킵니다.
 
-![Renaming](res/refactor_rename_intellij.gif)
+![이름 변경](res/refactor_rename_intellij.gif)
 
-| IDE       | Shortcut  |
-| --------- |-----------|
-| JetBrains | Shift+F6  |
-| VSCode    | F2        |
+| IDE       | 단축키  |
+| --------- |---------|
+| JetBrains | Shift+F6 |
+| VSCode    | F2      |
 
-#### Moving a Component to Another Module
+#### 구성 요소를 다른 모듈로 이동
 
-Whenever you would like to extract components and move them to a different module, the IDE can manage this
-automatically, adapting all references to this component.
+구성 요소를 추출하여 다른 모듈로 이동하려는 경우 IDE가 이를 자동으로 처리할 수 있습니다
+이 구성 요소에 대한 모든 참조를 적응시킵니다.
 
-| IDE       | Shortcut                                 |
+| IDE       | 단축키                                    |
 | --------- |------------------------------------------|
 | JetBrains | F6                                       |
-| VSCode    | Ctrl+Shift+R and select "Move Symbol to" |
+| VSCode    | Ctrl+Shift+R를 선택하고 "Move Symbol to"을 선택합니다. |
 
-#### Extracting a Method/Local Variable
+#### 메서드/로컬 변수 추출
 
-Turning a piece of code into a function/method is a common refactoring task:
+코드 조각을 함수/메서드로 변환하는 것은 일반적인 리팩터링 작업입니다.
 
-![Extracting a Method](res/refactor_extract_function_intellij.gif)
+![메서드 추출](res/refactor_extract_function_intellij.gif)
 
-| IDE       | Shortcut                                 |
+| IDE       | 단축키                                    |
 | --------- |------------------------------------------|
 | JetBrains | Ctrl+Alt+M (Cmd+Opt+M)                   |
-| VSCode    | Ctrl+Shift+R and select "Extract Method" |
+| VSCode    | Ctrl+Shift+R를 선택하고 "Extract Method"을 선택합니다. |
 
-The reverse operation (inlining a function) is also a common refactoring task.
+역변환(함수 내용을 인라인하는 것)도 일반적인 리팩터링 작업입니다.
 
-#### Extracting a Local Variable
+#### 로컬 변수 추출
 
-Turning an expression into a local variable is another minor refactoring task that frequently comes in handy.
-The IDE will typically update all usages of the expression.
+식을 로컬 변수로 변환하는 것은 편리한 소규모 리팩터링 작업입니다. IDE가 일반적으로 표현식의 모든 사용 사례를 업데이트합니다.
 
-| IDE       | Shortcut                                   |
+| IDE       | 단축키                                      |
 | --------- |--------------------------------------------|
 | JetBrains | Ctrl+Alt+V (Cmd+Opt+V)                     |
-| VSCode    | Ctrl+Shift+R and select "Extract Variable" |
+| VSCode    | Ctrl+Shift+R를 선택하고 "Extract Variable"을 선택합니다. |
 
 
-### Basic Editing
+### 기본 편집
 
-**Delete line**
+**줄 삭제**
 
-| IDE       | Shortcut                   |
-| --------- |----------------------------|
-| JetBrains | Ctrl+Y (Cmd+Y)             |
+| IDE       | 단축키                    |
+| --------- |-----------------------------|
+| JetBrains | Ctrl+Y (Cmd+Y)              |
 | VSCode    | Ctrl+Shift+K (Cmd+Shift+K) |
 
-**Move line(s) up/down**
+**줄(들) 위/아래로 이동**
 
-| IDE       | Shortcut                              |
-| --------- |---------------------------------------|
+| IDE      
+
+ | 단축키                              |
+| --------- |--------------------------------------|
 | JetBrains | Alt+Shift+Up/Down (Opt+Shift+Up/Down) |
 | VSCode    | Alt+Up/Down (Opt+Up/Down)             |
 
-**Move cursor to next/previous word**
+**다음/이전 단어로 커서 이동**
 
-| IDE       | Shortcut                         |
+| IDE       | 단축키                             |
 | --------- |----------------------------------|
 | JetBrains | Ctrl+Left/Right (Opt+Left/Right) |
 | VSCode    | Alt+Left/Right (Opt+Left/Right) |
 
-**Move to start/end of line/statement**
+**줄/문장의 시작/끝으로 커서 이동**
 
-| IDE       | Shortcut                         |
+| IDE       | 단축키                             |
 | --------- |----------------------------------|
-| JetBrains | Home/End or Fn+Left/Right        |
+| JetBrains | Home/End 또는 Fn+Left/Right      |
 | VSCode    | Ctrl+Left/Right (Cmd+Left/Right) |

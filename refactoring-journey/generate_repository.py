@@ -18,7 +18,7 @@ def create_or_update_repo_with_tags():
     If the destination folder already exists, it will be deleted and a new repository will be created.
     """
     root_folder = os.path.dirname(os.path.abspath(__file__))
-    repo_folder = os.path.join(root_folder, 'refactoring_repo')
+    repo_folder = os.path.join(root_folder, "refactoring_repo")
 
     if os.path.exists(repo_folder):
         shutil.rmtree(repo_folder)
@@ -31,7 +31,11 @@ def create_or_update_repo_with_tags():
     repo.index.add(".gitignore")
     repo.index.commit("Add .gitignore")
 
-    step_folders = [f for f in os.listdir(root_folder) if f.startswith('step') and os.path.isdir(os.path.join(root_folder, f))]
+    step_folders = [
+        f
+        for f in os.listdir(root_folder)
+        if f.startswith("step") and os.path.isdir(os.path.join(root_folder, f))
+    ]
     step_folders.sort()
 
     for step_folder_name in step_folders:
@@ -54,14 +58,13 @@ def create_or_update_repo_with_tags():
             else:
                 shutil.copy(item, dest_item)
 
-        #repo.index.add('*', force=False)  # This does not take .gitignore into consideration and will commit .pyc files and so on
+        # repo.index.add('*', force=False)  # This does not take .gitignore into consideration and will commit .pyc files and so on
         os.system("git add .")
-        repo.index.commit(f'Step: {step_folder_name}')
-        repo.create_tag(f'{step_folder_name}')
+        repo.index.commit(f"Step: {step_folder_name}")
+        repo.create_tag(f"{step_folder_name}")
+
+    print(f"Repository created and tagged in {repo_folder}")
 
 
-    print(f'Repository created and tagged in {repo_folder}')
-
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     create_or_update_repo_with_tags()

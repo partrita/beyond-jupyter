@@ -3,7 +3,6 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsRegressor
-from sklearn.preprocessing import StandardScaler
 from sklearn.tree import DecisionTreeRegressor
 
 from songpop.data import *
@@ -15,8 +14,15 @@ class ModelEvaluation:
     """
     Supports the evaluation of regression models, collecting the results.
     """
-    def __init__(self, X: pd.DataFrame, y: pd.Series,
-            test_size: float = 0.3, shuffle: bool = True, random_state: int = 42):
+
+    def __init__(
+        self,
+        X: pd.DataFrame,
+        y: pd.Series,
+        test_size: float = 0.3,
+        shuffle: bool = True,
+        random_state: int = 42,
+    ):
         """
         :param X: the inputs
         :param y: the prediction targets
@@ -24,8 +30,9 @@ class ModelEvaluation:
         :param shuffle: whether to shuffle the data prior to splitting
         :param random_state: the random seed to use for shuffling
         """
-        self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(X, y,
-            random_state=random_state, test_size=test_size, shuffle=shuffle)
+        self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(
+            X, y, random_state=random_state, test_size=test_size, shuffle=shuffle
+        )
         self.result_rows = []
 
     def evaluate_model(self, model) -> float:
@@ -53,12 +60,12 @@ def main():
 
     # evaluate models
     ev = ModelEvaluation(X, y)
-    ev.evaluate_model(LogisticRegression(solver='lbfgs', max_iter=1000))
+    ev.evaluate_model(LogisticRegression(solver="lbfgs", max_iter=1000))
     ev.evaluate_model(KNeighborsRegressor(n_neighbors=1))
     ev.evaluate_model(RandomForestRegressor(n_estimators=100))
     ev.evaluate_model(DecisionTreeRegressor(random_state=42, max_depth=2))
     log.info(f"Results:\n{ev.get_results().to_string()}")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     logging.run_main(main)

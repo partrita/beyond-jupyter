@@ -1,27 +1,23 @@
-# Case Study - Step 0: An Unstructured Script
+# 사례 연구 - 단계 0: 구조화되지 않은 스크립트
 
-Consider the script [run_regressor_evaluation.py](run_regressor_evaluation.py).
+먼저 [run_regressor_evaluation.py](run_regressor_evaluation.py) 스크립트를 살펴보세요.
 
-Apart from empty lines establishing semantic blocks, the script is unstructured and could be categorised as (a not very severe form of) "spaghetti code". 
-There is only one function `main`, which does everything, i.e.
+의미 있는 블록을 구성하는 빈 줄을 제외하고는, 이 스크립트는 구조화되지 않았으며 (심각한 형태는 아니지만) "스파게티 코드"로 분류될 수 있습니다. 하나의 `main` 함수만 존재하며, 이 함수가 모든 작업을 수행합니다.
 
-  * it loads a dataset,
-  * it projects and scales the data,
-  * it splits the dataset, and
-  * it creates and evaluates four types of models.
+- 데이터셋을 로드합니다.
+- 데이터를 투영하고 스케일링합니다.
+- 데이터셋을 분할하고, 네 가지 유형의 모델을 생성하고 평가합니다.
 
-Notice that ...
+주목할 점은 다음과 같습니다.
 
-1. readability is mediocre, because the code is somewhat lengthy and low-level; 
-2. there is some repetition; we are essentially repeating the same code for all four models;
-3. if we wanted to modify the evaluation (e.g. by changing the metric), we would need to make the changes in all four pieces of code pertaining to evaluations;
-4. there is no parametrisation; all evaluation parameters are hard-coded;
-5. we cannot easily reuse the evaluation code (other than by copying it);
-6. the data pipeline is hard-coded and used for all models simultaneously; there is no simple way of adapting the pre-processing exclusively for one particular model. 
+1. 가독성이 보통입니다. 코드가 다소 길고 저수준이기 때문에 가독성이 떨어집니다.
+2. 일부 반복이 있습니다. 사실상 네 가지 모델에 대해 모두 동일한 코드를 반복하고 있습니다.
+3. 평가를 수정하려면 (예: 메트릭 변경), 모든 네 개의 평가 코드에 대한 변경이 필요합니다.
+4. 매개변수화가 없습니다. 모든 평가 매개변수가 하드 코딩되어 있습니다.
+5. 평가 코드를 쉽게 재사용할 수 없습니다 (복사만으로는 재사용할 수 없습니다).
+6. 데이터 파이프라인이 하드 코딩되어 있으며 모든 모델에 동시에 사용됩니다. 특정 모델에 대해 전처리를 쉽게 적용할 수 있는 방법이 없습니다.
 
-We shall address the first five points in the following.
-(For point (6), please refer to our [refactoring journey](../../refactoring-journey/README.md), which will address it in detail.)
+우리는 다음에서 첫 다섯 가지 점을 다룰 것입니다.
+(6번에 대해서는 [리팩터링 여정](../../refactoring-journey/README.md)에서 자세히 다룰 예정입니다.)
 
-<hr>
-
-[Next Step](../02b-case-study-1-function-extraction/README.md)
+[다음 단계](../02b-case-study-1-function-extraction/README.md)

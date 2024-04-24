@@ -12,8 +12,9 @@ from songpop.data import *
 log = logging.getLogger(__name__)
 
 
-def compute_metric_rel_freq_error_within(y_ground_truth: np.ndarray, y_predicted: np.ndarray, 
-        max_error: float) -> float:
+def compute_metric_rel_freq_error_within(
+    y_ground_truth: np.ndarray, y_predicted: np.ndarray, max_error: float
+) -> float:
     cnt = 0
     for y1, y2 in zip(y_ground_truth, y_predicted):
         if abs(y1 - y2) <= max_error:
@@ -21,15 +22,17 @@ def compute_metric_rel_freq_error_within(y_ground_truth: np.ndarray, y_predicted
     return cnt / len(y_ground_truth)
 
 
-def evaluate_models(models,
-        X: pd.DataFrame,
-        y: pd.Series,
-        metric_fn: Callable[[np.ndarray, np.ndarray], float],
-        metric_name: str,
-        higher_is_better: bool,
-        random_state: int = 42,
-        shuffle: bool = True,
-        test_size=0.25) -> pd.DataFrame:
+def evaluate_models(
+    models,
+    X: pd.DataFrame,
+    y: pd.Series,
+    metric_fn: Callable[[np.ndarray, np.ndarray], float],
+    metric_name: str,
+    higher_is_better: bool,
+    random_state: int = 42,
+    shuffle: bool = True,
+    test_size=0.25,
+) -> pd.DataFrame:
     """
     Fits and evaluates the given model, collecting the evaluation results.
 
@@ -46,8 +49,9 @@ def evaluate_models(models,
         of quality
     """
     log.info(f"Evaluating {len(models)} models with {metric_fn} (name='{metric_name}')")
-    X_train, X_test, y_train, y_test = train_test_split(X, y,
-        random_state=random_state, test_size=test_size, shuffle=shuffle)
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, random_state=random_state, test_size=test_size, shuffle=shuffle
+    )
     result_rows = []
     for model in models:
         log.info(f"Fitting {model}")
@@ -56,7 +60,9 @@ def evaluate_models(models,
         metric_value = metric_fn(y_test, y_pred)
         log.info(f"{model}: {metric_name}={metric_value:.3f}")
         result_rows.append({"model": str(model), metric_name: metric_value})
-    return pd.DataFrame(result_rows).sort_values(metric_name, ascending=not higher_is_better)
+    return pd.DataFrame(result_rows).sort_values(
+        metric_name, ascending=not higher_is_better
+    )
 
 
 def main():
@@ -64,19 +70,24 @@ def main():
     X, y = dataset.load_xy_projected_scaled()
 
     models = [
-        LogisticRegression(solver='lbfgs', max_iter=1000),
+        LogisticRegression(solver="lbfgs", max_iter=1000),
         KNeighborsRegressor(n_neighbors=1),
         DecisionTreeRegressor(random_state=42, max_depth=2),
-        RandomForestRegressor(n_estimators=100)
+        RandomForestRegressor(n_estimators=100),
     ]
 
     # evaluate models
     max_error = 10
-    evaluation_result_df = evaluate_models(models, X, y,
+    evaluation_result_df = evaluate_models(
+        models,
+        X,
+        y,
         lambda t, u: compute_metric_rel_freq_error_within(t, u, max_error),
-        metric_name=f"RelFreqErrWithin[{max_error}]", higher_is_better=True)
+        metric_name=f"RelFreqErrWithin[{max_error}]",
+        higher_is_better=True,
+    )
     log.info(f"Results:\n{evaluation_result_df}")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     logging.run_main(main)

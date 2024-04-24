@@ -24,22 +24,36 @@ COL_ACOUSTICNESS = "acousticness"
 COL_INSTRUMENTALNESS = "instrumentalness"
 COL_LIVENESS = "liveness"
 COL_VALENCE = "valence"
-COLS_MUSICAL_DEGREES = [COL_DANCEABILITY, COL_ENERGY, COL_SPEECHINESS, COL_ACOUSTICNESS, COL_INSTRUMENTALNESS,
-    COL_LIVENESS, COL_VALENCE]
+COLS_MUSICAL_DEGREES = [
+    COL_DANCEABILITY,
+    COL_ENERGY,
+    COL_SPEECHINESS,
+    COL_ACOUSTICNESS,
+    COL_INSTRUMENTALNESS,
+    COL_LIVENESS,
+    COL_VALENCE,
+]
 # other numeric features
 COL_YEAR = "year"
 COL_LOUDNESS = "loudness"  # probably RMS or LUFS
 COL_TEMPO = "tempo"  # BPM
 COL_DURATION_MS = "duration_ms"
-COL_TIME_SIGNATURE = "time_signature"  # probably notes per bar (but non-uniform semantics: quarter or eighth notes)
+COL_TIME_SIGNATURE = (
+    "time_signature"
+)  # probably notes per bar (but non-uniform semantics: quarter or eighth notes)
 
 CLASS_POPULAR = "popular"
 CLASS_UNPOPULAR = "unpopular"
 
 
 class Dataset:
-    def __init__(self, num_samples: Optional[int] = None, drop_zero_popularity: bool = False, threshold_popular: int = 50,
-            random_seed: int = 42):
+    def __init__(
+        self,
+        num_samples: Optional[int] = None,
+        drop_zero_popularity: bool = False,
+        threshold_popular: int = 50,
+        random_seed: int = 42,
+    ):
         """
         :param num_samples: the number of samples to draw from the data frame; if None, use all samples
         :param drop_zero_popularity: whether to drop data points where the popularity is zero
@@ -58,7 +72,9 @@ class Dataset:
         df = pd.read_csv(config.csv_data_path()).dropna()
         if self.num_samples is not None:
             df = df.sample(self.num_samples, random_state=self.random_seed)
-        df[COL_GEN_POPULARITY_CLASS] = df[COL_POPULARITY].apply(lambda x: CLASS_POPULAR if x >= self.threshold_popular else CLASS_UNPOPULAR)
+        df[COL_GEN_POPULARITY_CLASS] = df[COL_POPULARITY].apply(
+            lambda x: CLASS_POPULAR if x >= self.threshold_popular else CLASS_UNPOPULAR
+        )
         return df
 
     def load_xy(self) -> Tuple[pd.DataFrame, pd.Series]:

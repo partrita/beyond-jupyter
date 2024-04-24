@@ -5,13 +5,15 @@ from songpop.data import Dataset
 from songpop.model_factory import ModelFactory
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # define & load dataset
     dataset = Dataset(10000)
     X, y = dataset.load_xy()
 
     # split the data
-    X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=42, test_size=0.3, shuffle=True)
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, random_state=42, test_size=0.3, shuffle=True
+    )
 
     # define models to be evaluated
     models = [

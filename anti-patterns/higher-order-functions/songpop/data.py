@@ -32,22 +32,36 @@ COL_ACOUSTICNESS = "acousticness"
 COL_INSTRUMENTALNESS = "instrumentalness"
 COL_LIVENESS = "liveness"
 COL_VALENCE = "valence"
-COLS_MUSICAL_DEGREES = [COL_DANCEABILITY, COL_ENERGY, COL_SPEECHINESS, COL_ACOUSTICNESS, COL_INSTRUMENTALNESS,
-    COL_LIVENESS, COL_VALENCE]
+COLS_MUSICAL_DEGREES = [
+    COL_DANCEABILITY,
+    COL_ENERGY,
+    COL_SPEECHINESS,
+    COL_ACOUSTICNESS,
+    COL_INSTRUMENTALNESS,
+    COL_LIVENESS,
+    COL_VALENCE,
+]
 # other numeric features
 COL_YEAR = "year"
 COL_LOUDNESS = "loudness"  # probably RMS or LUFS
 COL_TEMPO = "tempo"  # BPM
 COL_DURATION_MS = "duration_ms"
-COL_TIME_SIGNATURE = "time_signature"  # probably notes per bar (but non-uniform semantics: quarter or eighth notes)
+COL_TIME_SIGNATURE = (
+    "time_signature"
+)  # probably notes per bar (but non-uniform semantics: quarter or eighth notes)
 
 CLASS_POPULAR = "popular"
 CLASS_UNPOPULAR = "unpopular"
 
 
 class Dataset(ToStringMixin):
-    def __init__(self, num_samples: Optional[int] = None, drop_zero_popularity: bool = False, threshold_popular: int = 50,
-            random_seed: int = 42):
+    def __init__(
+        self,
+        num_samples: Optional[int] = None,
+        drop_zero_popularity: bool = False,
+        threshold_popular: int = 50,
+        random_seed: int = 42,
+    ):
         """
         :param num_samples: the number of samples to draw from the data frame; if None, use all samples
         :param drop_zero_popularity: whether to drop data points where the popularity is zero
@@ -62,12 +76,18 @@ class Dataset(ToStringMixin):
         self.col_target = COL_POPULARITY
 
     def tag(self):
-        return TagBuilder(glue="-") \
-            .with_alternative(self.num_samples is None, "full", f"numSamples{self.num_samples}") \
-            .with_conditional(self.drop_zero_popularity, "drop") \
-            .with_conditional(self.threshold_popular != 50, f"threshold{self.threshold_popular}") \
-            .with_conditional(self.random_seed != 42, f"seed{self.random_seed}") \
+        return (
+            TagBuilder(glue="-")
+            .with_alternative(
+                self.num_samples is None, "full", f"numSamples{self.num_samples}"
+            )
+            .with_conditional(self.drop_zero_popularity, "drop")
+            .with_conditional(
+                self.threshold_popular != 50, f"threshold{self.threshold_popular}"
+            )
+            .with_conditional(self.random_seed != 42, f"seed{self.random_seed}")
             .build()
+        )
 
     def load_data_frame(self) -> pd.DataFrame:
         """
@@ -95,7 +115,16 @@ class Dataset(ToStringMixin):
 
     def load_xy_projected_scaled(self) -> Tuple[pd.DataFrame, pd.Series]:
         X, y = self.load_xy()
-        cols_used_by_models = [COL_YEAR, *COLS_MUSICAL_DEGREES, COL_KEY, COL_MODE, COL_TEMPO, COL_TIME_SIGNATURE, COL_LOUDNESS, COL_DURATION_MS]
+        cols_used_by_models = [
+            COL_YEAR,
+            *COLS_MUSICAL_DEGREES,
+            COL_KEY,
+            COL_MODE,
+            COL_TEMPO,
+            COL_TIME_SIGNATURE,
+            COL_LOUDNESS,
+            COL_DURATION_MS,
+        ]
         X_proj = X[cols_used_by_models]
         scaler = StandardScaler()
         scaler.fit(X_proj)

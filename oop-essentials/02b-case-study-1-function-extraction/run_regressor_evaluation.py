@@ -20,14 +20,30 @@ def main():
     X, y = dataset.load_xy_projected_scaled()
 
     # split data
-    X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=42, test_size=0.3, shuffle=True)
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, random_state=42, test_size=0.3, shuffle=True
+    )
 
     # evaluate models
-    evaluate_model(LogisticRegression(solver='lbfgs', max_iter=1000), X_train, y_train, X_test, y_test)
+    evaluate_model(
+        LogisticRegression(solver="lbfgs", max_iter=1000),
+        X_train,
+        y_train,
+        X_test,
+        y_test,
+    )
     evaluate_model(KNeighborsRegressor(n_neighbors=1), X_train, y_train, X_test, y_test)
-    evaluate_model(RandomForestRegressor(n_estimators=100), X_train, y_train, X_test, y_test)
-    evaluate_model(DecisionTreeRegressor(random_state=42, max_depth=2), X_train, y_train, X_test, y_test)
+    evaluate_model(
+        RandomForestRegressor(n_estimators=100), X_train, y_train, X_test, y_test
+    )
+    evaluate_model(
+        DecisionTreeRegressor(random_state=42, max_depth=2),
+        X_train,
+        y_train,
+        X_test,
+        y_test,
+    )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

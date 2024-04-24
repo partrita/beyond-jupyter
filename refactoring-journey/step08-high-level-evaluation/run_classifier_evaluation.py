@@ -1,4 +1,7 @@
-from sensai.evaluation import ClassificationModelEvaluation, ClassificationEvaluatorParams
+from sensai.evaluation import (
+    ClassificationModelEvaluation,
+    ClassificationEvaluatorParams,
+)
 from sensai.util import logging
 from songpop.data import Dataset
 from songpop.features import FeatureName
@@ -20,19 +23,27 @@ def main():
         ModelFactory.create_random_forest(),
         ModelFactory.create_decision_tree_orig(),
         ModelFactory.create_xgb(),
-        ModelFactory.create_xgb("-meanArtistFreqPopular", add_features=[FeatureName.MEAN_ARTIST_FREQ_POPULAR]),
-        ModelFactory.create_xgb("-meanArtistFreqPopularOnly", features=[FeatureName.MEAN_ARTIST_FREQ_POPULAR]),
+        ModelFactory.create_xgb(
+            "-meanArtistFreqPopular",
+            add_features=[FeatureName.MEAN_ARTIST_FREQ_POPULAR],
+        ),
+        ModelFactory.create_xgb(
+            "-meanArtistFreqPopularOnly",
+            features=[FeatureName.MEAN_ARTIST_FREQ_POPULAR],
+        ),
     ]
 
     # declare parameters to be used for evaluation, i.e. how to split the data (fraction and random seed)
-    evaluator_params = ClassificationEvaluatorParams(fractional_split_test_fraction=0.3,
+    evaluator_params = ClassificationEvaluatorParams(
+        fractional_split_test_fraction=0.3,
         fractional_split_random_seed=42,
-        binary_positive_label=dataset.class_positive)
+        binary_positive_label=dataset.class_positive,
+    )
 
     # use a high-level utility class for evaluating the models based on these parameters
     ev = ClassificationModelEvaluation(io_data, evaluator_params=evaluator_params)
     ev.compare_models(models, fit_models=True)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     logging.run_main(main)

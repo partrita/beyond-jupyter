@@ -36,14 +36,23 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-def docker_build(path: str, docker_file: str, tag: str, build_args: Dict = None) -> Image:
+def docker_build(
+    path: str, docker_file: str, tag: str, build_args: Dict = None
+) -> Image:
     client = docker.APIClient()
-    build_outputs = client.build(path=path, dockerfile=docker_file, tag=tag, buildargs=build_args, rm=True, forcerm=True)
+    build_outputs = client.build(
+        path=path,
+        dockerfile=docker_file,
+        tag=tag,
+        buildargs=build_args,
+        rm=True,
+        forcerm=True,
+    )
 
     for build_output in build_outputs:
-        for log_line in build_output.decode('utf-8').split("\r\n"):
+        for log_line in build_output.decode("utf-8").split("\r\n"):
             if log_line:
-                out = json.loads(log_line).get('stream', '').strip()
+                out = json.loads(log_line).get("stream", "").strip()
                 if out:
                     print(out)
 
@@ -56,7 +65,9 @@ def docker_build(path: str, docker_file: str, tag: str, build_args: Dict = None)
 
 def docker_run(image: Image, host_port: int = 80) -> Container:
     client = docker.from_env()
-    container_obj = client.containers.run(image, ports={f"80/tcp": host_port}, detach=True)
+    container_obj = client.containers.run(
+        image, ports={"80/tcp": host_port}, detach=True
+    )
     return container_obj
 
 
@@ -74,10 +85,10 @@ def wait_for_container_ready(url: str, max_retries: int = 10, base_delay: float 
     raise ConnectionError("Could not connect to container")
 
 
-def send_request(url: str, method: str = 'GET', data: Dict = None):
-    if method == 'GET':
+def send_request(url: str, method: str = "GET", data: Dict = None):
+    if method == "GET":
         response = requests.get(url)
-    elif method == 'POST':
+    elif method == "POST":
         response = requests.post(url, json=data)
     else:
         raise ValueError("Method must be 'GET' or 'POST'")
@@ -98,10 +109,10 @@ if __name__ == "__main__":
     predict_url = base_url + "predict/"
     info_url = base_url + "model_info/"
     script_path = os.path.dirname(os.path.abspath(__file__))
-    sample_data_path = os.path.join(script_path, 'inference_sample.json')
+    sample_data_path = os.path.join(script_path, "inference_sample.json")
     repository_path = os.path.join(script_path, "..", "..")
     docker_file_path = os.path.abspath(os.path.join(script_path, "app", "Dockerfile"))
-    with open(sample_data_path, 'r') as file:
+    with open(sample_data_path, "r") as file:
         sample_data = json.load(file)
 
     image_obj = docker_build(repository_path, docker_file_path, docker_tag)

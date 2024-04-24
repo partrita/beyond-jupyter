@@ -8,10 +8,12 @@ from pydantic import BaseModel
 script_path = os.path.dirname(os.path.abspath(__file__))
 
 app = FastAPI()
-default_model_path = os.path.join(script_path, "..", "results", "models", "regression", "full", "best_model.pickle")
+default_model_path = os.path.join(
+    script_path, "..", "results", "models", "regression", "full", "best_model.pickle"
+)
 model_path = os.environ.get("MODEL_PATH", default_model_path)
 
-with open(model_path, 'rb') as f:
+with open(model_path, "rb") as f:
     model = pickle.load(f)
 
 

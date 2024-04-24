@@ -16,7 +16,9 @@ log = logging.getLogger(__name__)
 
 class Metric(ABC):
     @abstractmethod
-    def compute_value(self, y_ground_truth: np.ndarray, y_predicted: np.ndarray) -> float:
+    def compute_value(
+        self, y_ground_truth: np.ndarray, y_predicted: np.ndarray
+    ) -> float:
         """
         :param y_ground_truth: the ground truth values
         :param y_predicted: the model's predictions
@@ -41,7 +43,9 @@ class Metric(ABC):
 
 
 class MetricMeanAbsError(Metric):
-    def compute_value(self, y_ground_truth: np.ndarray, y_predicted: np.ndarray) -> float:
+    def compute_value(
+        self, y_ground_truth: np.ndarray, y_predicted: np.ndarray
+    ) -> float:
         return metrics.mean_absolute_error(y_ground_truth, y_predicted)
 
     def get_name(self) -> str:
@@ -52,7 +56,9 @@ class MetricMeanAbsError(Metric):
 
 
 class MetricR2(Metric):
-    def compute_value(self, y_ground_truth: np.ndarray, y_predicted: np.ndarray) -> float:
+    def compute_value(
+        self, y_ground_truth: np.ndarray, y_predicted: np.ndarray
+    ) -> float:
         return metrics.r2_score(y_ground_truth, y_predicted)
 
     def get_name(self) -> str:
@@ -66,7 +72,9 @@ class MetricRelFreqErrorWithin(Metric):
     def __init__(self, max_error: float):
         self.max_error = max_error
 
-    def compute_value(self, y_ground_truth: np.ndarray, y_predicted: np.ndarray) -> float:
+    def compute_value(
+        self, y_ground_truth: np.ndarray, y_predicted: np.ndarray
+    ) -> float:
         cnt = 0
         for y1, y2 in zip(y_ground_truth, y_predicted):
             if abs(y1 - y2) <= self.max_error:
@@ -84,9 +92,16 @@ class ModelEvaluation:
     """
     Supports the evaluation of regression models, collecting the results.
     """
-    def __init__(self, X: pd.DataFrame, y: pd.Series,
-            metrics: List[Metric],
-            test_size: float = 0.3, shuffle: bool = True, random_state: int = 42):
+
+    def __init__(
+        self,
+        X: pd.DataFrame,
+        y: pd.Series,
+        metrics: List[Metric],
+        test_size: float = 0.3,
+        shuffle: bool = True,
+        random_state: int = 42,
+    ):
         """
         :param X: the inputs
         :param y: the prediction targets
@@ -96,8 +111,9 @@ class ModelEvaluation:
         :param shuffle: whether to shuffle the data prior to splitting
         :param random_state: the random seed to use for shuffling
         """
-        self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(X, y,
-            random_state=random_state, test_size=test_size, shuffle=shuffle)
+        self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(
+            X, y, random_state=random_state, test_size=test_size, shuffle=shuffle
+        )
         self.metrics = metrics
         self.result_rows = []
 
@@ -125,7 +141,9 @@ class ModelEvaluation:
             :param df: a data frame containing model names (column 'model') and metrics (other columns)
             :param metric: the metric by which the data frame is to be sorted (best model first)
             """
-            self.df = df.sort_values(metric.get_name(), ascending=not metric.is_larger_better())
+            self.df = df.sort_values(
+                metric.get_name(), ascending=not metric.is_larger_better()
+            )
             self.metric = metric
 
         def get_best_model_name(self) -> str:
@@ -147,15 +165,19 @@ def main():
     X, y = dataset.load_xy_projected_scaled()
 
     # evaluate models
-    ev = ModelEvaluation(X, y, [MetricR2(), MetricMeanAbsError(), MetricRelFreqErrorWithin(10)])
-    ev.evaluate_model(LogisticRegression(solver='lbfgs', max_iter=1000))
+    ev = ModelEvaluation(
+        X, y, [MetricR2(), MetricMeanAbsError(), MetricRelFreqErrorWithin(10)]
+    )
+    ev.evaluate_model(LogisticRegression(solver="lbfgs", max_iter=1000))
     ev.evaluate_model(KNeighborsRegressor(n_neighbors=1))
     ev.evaluate_model(RandomForestRegressor(n_estimators=100))
     ev.evaluate_model(DecisionTreeRegressor(random_state=42, max_depth=2))
     result = ev.get_result()
     log.info(f"Results:\n{result.df.to_string()}")
-    log.info(f"Best model is '{result.get_best_model_name()}' with {result.metric.get_name()}={result.get_best_metric_value()}'")
+    log.info(
+        f"Best model is '{result.get_best_model_name()}' with {result.metric.get_name()}={result.get_best_metric_value()}'"
+    )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     logging.run_main(main)

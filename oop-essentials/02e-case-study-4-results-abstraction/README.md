@@ -1,30 +1,23 @@
-# Case Study - Step 4: An Abstraction for Evaluation Results
+# 사례 연구 - 단계 4: 평가 결과에 대한 추상화
 
-Consider the updated script [run_regressor_evaluation.py](run_regressor_evaluation.py).
+먼저 수정된 스크립트 [run_regressor_evaluation.py](run_regressor_evaluation.py)를 확인하세요.
 
-The result type we used in the previous step is a low-level data structure (a pandas DataFrame),
-from which important information is inconvenient to retrieve. In particular, retrieving the name
-of the best model from the data frame was not straightforward.
+이전 단계에서 사용한 결과 유형은 저수준 데이터 구조(판다스 DataFrame)였으며 중요한 정보를 검색하기가 불편했습니다. 특히 데이터 프레임에서 최고의 모델 이름을 검색하는 것은 간단하지 않았습니다.따라서 이 단계에서 평가 결과에 대한 추상화를 도입해 검색을 더 편리하게 만듭니다.
 
-In this step, we thus introduce an abstraction for the evaluation result, which makes the retrieval more convenient.
+- 여전히 데이터 프레임에 액세스하여 보고를 위해 인쇄 할 수 있습니다.
+- 또한 이제 최고의 모델 이름 (메소드 `get_best_model_name`) 및 해당 메트릭 값 (메소드 `get_best_metric_value`)을 검색할 수 있습니다.
 
-  * We still have access to the data frame and can print it for reporting purposes.
-  * In addition, we can now retrieve the name of the best model (via method `get_best_model_name`) as well as the metric value it achieved (via method `get_best_metric_value`). 
+이로써 우리의 사례 연구를 마무리합니다. 주목할 점은 다음과 같습니다.
 
-This concludes our case study.
-Notice that 
-  * Our evaluation code can now be flexibly parametrised; we could change the split parameters and the metrics being used very easily.
+- 우리의 평가 코드는 이제 유연하게 매개 변수화 될 수 있습니다. 매우 쉽게 분할 매개 변수 및 사용되는 메트릭을 변경할 수 있습니다.
 
-    ```python
-    metrics = [MetricR2(), MetricMeanAbsError(), MetricRelFreqErrorWithin(10)]
-    ev = ModelEvaluation(X_scaled, y, metrics, test_size=0.2, random_seed=23)
-    ```
+```python
+metrics = [MetricR2(), MetricMeanAbsError(), MetricRelFreqErrorWithin(10)]
+ev = ModelEvaluation(X_scaled, y, metrics, test_size=0.2, random_seed=23)
+```
 
-  * The evaluation abstraction is a reusable component, and so are the metrics. We could use them in completely different contexts going forward (e.g. a hyperparameter optimisation).
-  * The classes we introduced represent meaningful concepts in our domain.
-    Each class has a well-defined purpose and is reasonably concise, making it easy to maintain.
+- 평가 추상화는 재사용 가능한 구성 요소이며 메트릭도 마찬가지입니다. 이들은 앞으로 완전히 다른 맥락에서 사용할 수 있습니다(예 : 하이퍼 파라미터 최적화).
+- 우리가 소개 한 클래스는 도메인에서 의미있는 개념을 나타냅니다. 각 클래스는 명확한 목적을 가지고 있으며 상당히 간결하여 유지 보수가 쉽습니다.
 
 
-<hr>
-
-[Next: General Design and Development Principles](../03-general-principles/README.md)
+[다음: 일반적인 디자인 및 개발 원칙](../03-general-principles/README.md)

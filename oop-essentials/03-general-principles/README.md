@@ -1,104 +1,78 @@
-# General Design and Development Principles
+# 기본 코드 디자인과 계발 원칙
 
-## SOLID Design
+## SOLID 원칙
 
-SOLID is a collection of five principles introduced by Robert C. Martin.
-We shall first describe the principles and then relate them to the preceding case study. 
+SOLID는 로버트 C. 마틴에 의해 소개 된 다섯 가지 원칙의 모음입니다.
+먼저 원칙을 설명한 다음 앞서 다룬 사례 연구와 관련시킵니다.
 
- 1. **Single Responsibility Principle**
+1. **단일 책임 원칙**
+   - 컴퓨터 프로그램의 모든 클래스는 프로그램 기능의 단일 부분에 책임을 져야하며 이를 캡슐화해야합니다.
+   - 이 원칙을 준수하면 *명확성* 및 *유지 관리 용이성*이 크게 향상됩니다:
+   - 구성 요소는 스캔하고 이해하기 쉬운 상대적으로 작은 코드 조각입니다.
+   - 변경/수정이 필요한 구성 요소를 쉽게 식별하고 수정을 빠르게 수행할 수 있습니다.
 
-    “Every class in a computer program should have responsibility over a single part of the program's functionality, which it should encapsulate.”
-    
-    Adhering to this principle critically improves *clarity* and *maintainability*:
-    * The components are relatively small pieces of code that are easy to scan and understand.
-    * The component where a change/fix would need to be implemented is easy to identify and modifications can be made more quickly.
+2. **개방-폐쇄 원칙**
+   - 소프트웨어 엔터티(클래스, 모듈, 함수 등)는 확장을 위해 열려 있어야하지만 소스 코드를 수정하지 않은 채로 닫혀 있어야합니다. 즉, 엔터티는 소스 코드를 수정하지 않고도 동작을 확장 할 수 있어야합니다. 이것은 *확장 가능성*을 중요하게 향상시킵니다:
+   - 기존 구성 요소의 개발을 방해하지 않고 새로운 기능을 추가하는 것이 더 쉽습니다.
+   - 확장은 원본 소스 코드에 액세스하지 않는 사용자에 의해 수행 될 수 있습니다.
 
- 2. **Open-Closed Principle**
+3. **리스코프 치환 원칙**
+   - S가 T의 하위 유형인 경우, T 유형의 객체를 S 유형의 객체로 교체하면 프로그램의 원하는 속성을 변경하지 않고 교체 할 수 있습니다.
+   - 이것은 추상화에서 잘 정의된 인터페이스 계약을 강제하며 구체적인 구현을 교환 가능하게 만듭니다.
 
-    “Software entities (classes, modules, functions, etc.) should be open for extension, but closed for modification,” i.e. entities should allow their behaviour to be extended without modifying the source code.
-    
-    This critically improves *extensibility*:
-    * It is easier to add new functionality, as it can be done without interfering with the development of existing components.
-    * Extensions can be made by users who do not even have access to the original source code.
+4. **인터페이스 분리 원칙**
+   - 클라이언트가 사용하지 않는 메소드에 의존하지 않아야합니다. 큰 인터페이스는 클라이언트가 관심을 가지고있는 메소드만 알아보기 위해 더 작고 구체적인 것으로 분할됩니다. 이것은 명확성을 크게 향상시키고 클라이언트 구현 프로세스를 단순화합니다:
+   - 클라이언트는 필요하지 않은 기능으로 혼동되지 않으며 찾고있는 함수를 빠르게 찾을 수 있습니다.
+   - 의존할 인터페이스를 결정하는 것이 간단합니다.
 
- 3. **Liskov Substitution Principle**
+5. **의존성 역전 원칙**
+   -고수준 모듈은 저수준 모듈에 의존하지 않아야합니다. 둘 다 추상화(예 : 인터페이스)에 의존해야합니다.추상화는 세부 사항에 의존해서는 안됩니다. 세부 사항(구체적인 구현)은 추상화에 의존해야합니다.이것은 모듈 간의 의존성을 서로 분리시키고 인터페이스 및 추상 상호 작용에 대한 의존성을 중점으로 둡니다:
+   - 의존성이 약해져 구현을 교환 할 수 있습니다.
+   - 인터페이스가 명확하고 필요한 최소한으로 줄어듭니다.
 
-    “If S is a subtype of T, then objects of type T may be replaced with objects of type S without altering any of the desirable properties of the program.”
-    
-    This enforces well-defined interface contracts in abstractions, rendering concrete implementations interchangeable.
+*예시.* 우리가 앞서 살펴본 사례 연구는 매우 간단한 예제였지만, 본질적으로 위의 모든 원칙을 보여줍니다:
 
- 4. **Interface Segregation Principle**
+ - 단일 책임 원칙: 모든 클래스 `Metric`, `ModelEvaluation` 및 `Results`는 명확한 목적을 제공하며 서로 다른 추상화 수준을 혼합하지 않습니다.
+ - 개방-폐쇄 원칙: `ModelEvaluation`은 사용자가 지정할 수있는 하나 이상의 `Metric` 인스턴스에 따라 몇 가지 확장성을 제공합니다. 사용자는 자체 메트릭을 구현하고 이를 적용하기 위해 평가의 구현을 전혀 수정할 필요가 없습니다.
+ - 리스코프 치환 원칙: `ModelEvaluation`은 어떤 `Metric` 평가를 받아야하는지 신경 쓰지 않으며 그 구체적인 내용을 인식하지 않습니다. `Metric` 구현이 인터페이스를 올바르게 구현한다면 어떤 구현이든 제공할 수 있습니다.
+ - 인터페이스 분리 원칙: 정의한 인터페이스는 모두 처음부터 작으므로 이는 이미 각각의 책임을 갖는 추상화이기 때문에 이미 만족됩니다. 그러나 더 큰 응용 프로그램의 경우, 해당 추상화가 여러 일반적으로 더 기본적인 것들의 특수화로 볼 수있는 복잡한 개념 인 경우 하나 이상의 인터페이스 (추상 기본 클래스)를 동시에 구현하는 것이 유용 할 수 있습니다.
+ - 의존성 역전 원칙: 특정 메트릭의 (아마도 하드 코딩 된) 인스턴스를 사용하는 대신 `ModelEvaluation`은 추상 `Metric`에 의존하는 것이이 원칙의 응용입니다.
 
-    “No client should be forced to depend on methods it does not use. Large interfaces are split into smaller and more specific ones so that clients will only have to know about the methods that are of interest to them.”
-    
-    This critically improves clarity and simplifies the client implementation process:
-    * Clients are not confused by functionality they do not need and quickly find the functions they are looking for.
-    * Deciding on the interfaces to depend on is straightforward.
+# DRY: 중복된 코드를 작성하지 마십시오
 
- 5. **Dependency Inversion Principle**
+DRY 원칙은 코드 중복을 피하기 위해 높은 수준의 *요소화*를 요구합니다: 코드의 일부가 반복되면 여러 번 적용되는 재사용 가능한 함수/클래스로 추출하십시오. 이는 수학에서 요소화와 유사합니다: $ab+ac = a(b+c)$.
 
-    “High-level modules should not depend on low-level modules. Both should depend on abstractions (e.g., interfaces).  
-    Abstractions should not depend on details. Details (concrete implementations) should depend on abstractions.”
-    
-    This critically decouples modules from one another and focuses dependencies between modules on interfaces and abstract interactions:
-    * Dependencies are weaker, allowing implementations to be exchanged.
-    * Interfaces are clear and reduced to the necessary minimum.
-   
-
-*Examples.* Even though our case study was a very simple example, the final solution essentially exhibits all of the above principles:
-
- * Single Responsibility Principle: All of the classes `Metric`, `ModelEvaluation` and `Results` serve well-defined purposes and do not mix different levels of abstraction.
- * Open-Closed Principle: `ModelEvaluation` provides some extensibility by depending on one or more `Metric` instances, which the user can specify. Users are free to implement their own metrics and do not need to modify the implementation of the evaluation at all in order to get them applied.
- * Liskov Substitution Principle: The `ModelEvaluation` does not care which `Metric` evaluation it receives and is unaware of its specifics. As long as the `Metric` implementation correctly implements the interface, any implementation can be provided.
- * Interface Segregation Principle: The interfaces we defined are all small to begin with, so this is already satisfied because our abstractions have a single responsibility. In larger applications, however, it can make sense for an abstraction to simultaneously implement more than one interface (abstract base class) if the respective abstraction is a complex concept which can be viewed as a specialisation of several, typically more primitive ones.
- * Dependency Inversion Principle: `ModelEvaluation` depending on the abstract `Metric` rather than using a (perhaps hard-coded) instance of a particular metric is an application of this principle.
-
-# DRY: Don't Repeat Yourself
-
-The DRY principle calls for a high degree of *factorisation* in order to avoid code duplication: 
-If a piece of code repeats, factor it out into a reusable function/class which is then applied multiple times; this is akin to factorisation in mathematics: `ab+ac = a(b+c)`.
-
-Note, however, that factorisation can be overdone. While two pieces of code may use the same sub-routine at present, it may be the case that the implementations have different needs in the future, requiring different extensions. 
-Instead of applying factorisation and extracting a function that can be parametrised in a myriad of ways only to support both cases, it can, therefore,  sometimes be better - for the sake of clarity - to have two copies of the code, which are then free to develop independently.
-A high degree of factorisation and clarity can be conflicting goals. 
+그러나 모든 것을 요소화하는 것은 과도 할 수 있습니다. 두 조각의 코드가 현재 동일한 하위 루틴을 사용할 수 있지만 미래에는 다른 확장이 필요할 수 있으므로 다른 구현이 필요할 수 있습니다. 요소화를 적용하고 모든 경우를 지원하기 위해 수많은 방법으로 매개 변수화 된 함수를 추출하는 대신에는 두 코드의 사본을 가지고 독립적으로 개발 할 수 있습니다. 높은 수준의 요소화와 명확성은 충돌하는 목표 일 수 있습니다.
 
 # YAGNI: You Aren't Gonna Need It
 
-The YAGNI principle seeks to find the simplest solution that will work, without overdoing it or preparing for future needs that may never arise.
-Overengineering a solution to prepare for future needs is virtually *always* a bad thing, and unexperienced programmers typically do not realise how rare it is for these needs to actually materialise.
-Instead, keep your design clean, such that it will be easy to refactor it once new requirements arise.
+YAGNI 원칙은 필요할 때까지 불필요한 복잡성을 추가하지 않고도 작동하는 가장 간단한 솔루션을 찾으려고 합니다. 미래의 필요에 대비하여 솔루션을 과도하게 설계하는 것은 거의 항상 나쁜 일이며, 경험이 부족한 프로그래머들은 이러한 필요성이 실제로 발생하는 것이 얼마나 드문지 인식하지 못합니다. 대신에, 디자인을 깨끗하게 유지하여 새로운 요구 사항이 발생할 때 쉽게 리팩터링 할 수 있도록합니다.
 
-# KISS (Keep It Simple and Stupid) and the Principle of Least Surprise
+# KISS(Keep It Simple and Stupid) 및 최소한의 놀람 원칙(Least Surprise)
 
-The KISS principle calls for simple solutions rather than complex ones. 
-If there is no (good) reason for the design to be complex, prefer simple design, as it will facilitate understandability.
+KISS 원칙은 복잡한 것보다 간단한 해결책을 선호합니다. 디자인이 복잡할 필요가 없는 경우에는 단순한 디자인을 선호하십시오. 이것은 이해하기 쉬워질 것입니다.
 
-This is closely tied to the *principle of least surprise*, which calls for design choices that won't elicit surprise on the user's part. 
-Understand people as part of the system, and choose a design that matches people's expectations, experience, and mental models. 
-If possible, the design should prefer idiomatic language constructs over exotic, non-standard ones that aren't easily understood - even if the exotic ones may solve a problem slightly more elegantly.
+이는 *최소한의 놀람* 원칙과 밀접하게 관련되어 있습니다. 최소한의 놀람 원칙은 사용자가 놀람을 일으키지 않는 디자인 선택을 요구합니다.
+사람들을 시스템의 일부로 이해하고, 사용자의 기대, 경험 및 정신적 모델과 일치하는 디자인을 선택하십시오. 가능하면 독특하고 이해하기 어려운 비표준적인 구조보다 일반적인 구조를 선호해야합니다. 심지어 독특한 것이 약간 더 우아하게 문제를 해결할지라도요.
 
-# Extreme Programming (XP)
+# 익스트림 프로그래밍 (XP)
+YAGNI는 익스트림 프로그래밍(XP)의 핵심 원칙 중 하나로, 코드뿐만 아니라 협업에 관한 원칙도 다룹니다.
 
-YAGNI is one of the core principles of extreme programming (aka XP), which addresses not only principles pertaining to code but also collaboration.
+XP의 핵심 가치는 다음과 같습니다:
+- **소통**: XP는 개발자 간의 소통이 필요하며, 지식 전달과 조정을 위해 중요합니다.
+- **간단함**(= YAGNI)
+- **피드백**: 과거 성능을 주기적으로 반영하여 코드 및 적용된 개발 프로세스의 개선 영역을 식별할 수 있습니다.
+- **용기**: 개발 프로세스를 방해하는 문제를 제기하기 위해 용기가 필요합니다. 예를 들어 조직적 문제 또는 제품이 향하는 일반적인 방향과 관련된 문제입니다.
+- **존중**: 상호 존중은 소통을 촉진하고 피드백을 제공하고 수용하는 데 필요합니다.
 
-The core values of XP are:
-  * **Communication**: XP stresses the need for communication between developers, for knowledge transfer and alignment.
-  * **Simplicity** (= YAGNI)
-  * **Feedback**: Periodically reflecting on past performance can help to identify areas for improvement, both in terms of code and the development process being applied.
-  * **Courage**: Courage is required in order to raise issues that impede the development process, e.g. organisational issues or even issues pertaining to the general direction the product is headed in.
-  * **Respect**: Mutual respect is required in order to foster communication and to provide and accept feedback.
+XP는 또한 다음과 같은 몇 가지 실천 방법을 정의합니다.
+- **간단한 디자인**: 단순하지만 항상 적절한 디자인으로 소프트웨어를 빌드합니다.
+- **페어 프로그래밍**: 두 명의 개발자가 단일 코드를 생성하기 위해 직접 협력합니다. 이렇게하면 모든 코드에 대해 둘 이상의 사람이 익숙해지므로 지식 전달이 즉시 이루어지며 추가 검토가 필요하지 않습니다.
+- **리팩토링**: 기술적 부채가없는 단순하고 적절한 코드의 품질을 유지하기 위해 코드를 지속적으로 리팩터링합니다.
+- **테스트 주도 개발**: 기능을 테스트하는 방법을 처음부터 고려하는 것은 디자인을 개선하고 오류를 방지하는 데 도움이됩니다.
+- **지속적인 통합**: 소프트웨어 제품을 개선하는 변경 사항을 지속적으로 통합하고 자동화 된 테스트를 적용하여 품질 표준을 유지하는 데 도움이됩니다.
+- **집단적인 코드 소유권**: 모든 코드 조각은 즉시 두 명 이상의 개발자에게 유지 관리 될 수 있습니다. 모든 코드가 많은 사람들의 주의를 받아 품질을 높이고 결함을 줄입니다.
 
-XP furthermore defines a set of practices, including
-  * **Simple Design**: Build software to a simple but always adequate design.
-  * **Pair Programming**: Two developers directly collaborate to produce a single piece of code. This immediately creates knowledge transfer (as more than one person is familiar with every piece of code) and eliminates the need for additional reviews.
-  * **Refactoring**: Constantly refactoring the code to retain the quality of simple, adequate code that has no technical debt.
-  * **Test-Driven Development**: Thinking about how functionality can be tested from the very beginning can improve design and avoid errors.
-  * **Continuous Integration**: Constantly integrating changes that improve the software product and applying automated tests helps to keep quality standards high.
-  * **Collective Code Ownership**: Every piece of code can be immediately maintained by at least two developers. All code gets the benefit of many people’s attention, which increases code quality and reduces defects.
+전체 원칙과 아이디어에 대해서는 ["익스트림 프로그래밍이란 무엇인가?" 론 제프리스 저](https://ronjeffries.com/xprog/what-is-extreme-programming/)를 참조하십시오.
 
-For the full set of principles and ideas, please refer to ["What is Extreme Programming?" by Ron Jeffries](https://ronjeffries.com/xprog/what-is-extreme-programming/).
-
-
-<hr>
-
-[Next: Selected Design Patterns](../04-selected-design-patterns/README.md)
+[다음: 디자인 패턴 선택하기](../04-selected-design-patterns/README.md)
