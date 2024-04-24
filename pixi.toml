@@ -1,0 +1,30 @@
+[project]
+name = "beyond-jupyter"
+version = "0.1.0"
+description = "Add a short description here"
+authors = ["fkt <deepthought@postech.ac.kr>"]
+channels = ["conda-forge"]
+platforms = ["linux-64"]
+
+[tasks]
+
+[dependencies]
+python = ">=3.12.3,<3.13"
+jupyter = ">=1.0.0,<1.1"
+pandas = ">=2.2.2,<2.3"
+scipy = ">=1.13.0,<1.14"
+numpy = ">=1.26.4,<1.27"
+seaborn = ">=0.13.2,<0.14"
+xgboost = ">=2.0.3,<2.1"
+scikit-learn = ">=1.4.2,<1.5"
+docker-py = ">=7.0.0,<7.1"
+pip = ">=24.0,<25"
+mlflow = ">=2.12.1,<2.13"
+gitpython = ">=3.1.43,<3.2"
+kaggle = ">=1.6.12,<1.7"
+typing_extensions = ">=4.11.0,<4.12"
+hyperopt = ">=0.2.7,<0.3"
+requests = ">=2.31.0,<2.32"
+
+[pypi-dependencies]
+sensai = "*"
