@@ -1,10 +1,5 @@
-# Step 1: A Python Script
+# 단계 1: 파이썬 스크립트
 
-In this step, we simply copy the code that relates to the models to a [Python script](run_classifier_evaluation.py),
-i.e. we copy the code that prepares the data as well as the code that defines
-and evaluates the models.
+이번 단계에서는 모델과 관련된 코드를 [파이썬 스크립트](run_classifier_evaluation.py)로 복사합니다. 즉, 데이터를 준비하는 코드와 모델을 정의하고 평가하는 코드를 때어냅니다.
 
-
-<hr>
-
-[Next Step](../step02-dataset-representation/README.md)
+[다음 단계](../step02-dataset-representation/README.md)

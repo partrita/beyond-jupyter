@@ -1,11 +1,10 @@
-# Step 13: Deployment via Docker
+# 단계 13: 도커로 배포하기
 
-The result of our journey is a model artifact, which is serializable and deployable with minimal
-effort. For the build of a docker image for inference, we have added a now folder `app` with the following:
-* [main.py](app/main.py): definition of the fastAPI application, including input data validation via pydantic
+우리 여정의 최종 결과물은 최소한의 노력으로 배포할 수 있는 모델입니다. 모델 배포를 위해 도커 이미지 빌드를 위한 폴더 `app`을 새로 만듭니다.
 
-  Notice that the persisted regression model from the previous step can be directly applied (without modifications) to an input data frame that we can easily construct from the data class instance that we receive as input from the framework:
-  ```python
+- [main.py](app/main.py): fastAPI 애플리케이션의 정의, pydantic을 통한 입력 데이터 유효성 검사를 포함합니다.
+- 이전 단계에서 보관된 회귀 모델을 수정하지 않고도 입력 데이터 클래스 인스턴스로부터 받은 입력 데이터 프레임에 직접 적용할 수 있음을 주목하세요.
+- ```python
   @app.post("/predict/")
   def predict(input_data: PredictionInput):
       data = pd.DataFrame([dict(input_data)])
@@ -13,27 +12,25 @@ effort. For the build of a docker image for inference, we have added a now folde
       return prediction.to_dict(orient="records")
   ```
 
-* [environment-prod.yml](app/environment-prod.yml): conda environment file, which includes dependencies to run the fastAPI application and fully pins all dependencies (it was created via `conda env export`).
-* [Dockerfile](app/Dockerfile): a minimal Dockerfile for running the model inference
+- [environment-prod.yml](app/environment-prod.yml): fastAPI 애플리케이션을 실행하는 데 필요한 종속성을 포함하며 모든 종속성을 완전히 고정합니다(`conda env export`를 사용하여 생성되었습니다).
+- [Dockerfile](app/Dockerfile): 모델 추론을 실행하기 위한 최소한의 `Dockerfile`입니다.
 
-The docker image will make use of the best regression model which was saved by `run_regressor_evaluation.py` from the previous step, so in order for the image to work, make sure that you ran the script in the previous step's directory at least once.
+도커 이미지는 이전 단계에서 `run_regressor_evaluation.py`에 의해 저장된 최적의 회귀 모델을 사용할 것입니다. 따라서 이미지가 작동하려면 이전 단계 디렉토리에서 해당 스크립트를 적어도 한 번 실행했는지 확인하세요.
 
-To build the image, execute this from the top-level of the repository
-```
+이미지를 빌드하려면 다음을 최상위 폴더에서 실행하세요.
+
+```shell
 docker build -t spotify-popularity-estimator -f refactoring-journey/step10-deployment/app/Dockerfile .
 ```
-and to run the container
-```
+
+컨테이너를 실행하려면 다음을 실행하세요.
+
+```shell
 docker run -p 80:80 spotify-popularity-estimator
 ```
 
-You can use the script [run_fastapi_test.py](run_fastapi_test.py) to build the image, start a container
-and send a GET and a POST request with sample data.
+[run_fastapi_test.py](run_fastapi_test.py) 스크립트를 사용하여 이미지를 빌드하고 컨테이너를 시작하고 샘플 데이터로 `GET` 및 `POST` 요청을 보낼 수 있습니다. 이로써 리팩터링 강의를 마칩니다.
 
+## 이 단계에서 다룬 원칙
 
-This concludes our refactoring journey.
-
-
-## Principles Addressed in this Step
-
-* Develop reusable components
+- 재사용 가능한 구성 요소 개발

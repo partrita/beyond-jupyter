@@ -1,9 +1,6 @@
-# Step 11: Cross-Validation.
+# 단계 11: 교차 검증
 
-In this step, we extend the runnable scripts to optionally apply cross-validation
-and thus evaluate our models on multiple splits rather than a single split.
-The evaluation utility class directly supports this and the changes are 
-minimal as a result.
+이번 단계에서는 실행 가능한 스크립트를 확장하여 선택적으로 교차 검증을 적용하고, 한 번의 분할이 아닌 여러 분할에서 모델을 평가합니다. 평가 유틸리티 클래스가 직접 이를 지원하므로 변경 사항은 최소화됩니다.
 
 ```python
 evaluator_params = VectorClassificationModelEvaluatorParams(fractional_split_test_fraction=0.3,
@@ -13,17 +10,15 @@ ev = ClassificationEvaluationUtil(io_data, evaluator_params=evaluator_params, cr
 ev.compare_models(models, tracked_experiment=tracked_experiment, result_writer=result_writer, use_cross_validation=use_cross_validation)
 ```
 
-We do, however, need to take into consideration that applying cross-validation
-amounts to a different experiment definition and adjust the definition of the
-experiment name accordingly.
+그러나 교차 검증을 적용하는 것은 다른 실험 정의를 의미하므로 실험 이름의 정의를 이에 맞게 조정해야합니다.
 
 ```python
 experiment_name = TagBuilder("popularity-classification", dataset.tag()) \
     .with_conditional(use_cross_validation, "CV").build()
 ```
-In particular, we are interested in the performance of the XGBoost model retrieved from
-the previous hyperparameter optimisation step, which is named `XGBoost-meanPop-opt`. Running the 3-fold cross-validation results in the
-following metrics:
+
+특히, 이전 하이퍼파라미터 최적화 단계에서 검색한 XGBoost 모델의 성능에 관심이 있습니다. 해당 모델의 이름은 `XGBoost-meanPop-opt`입니다. 3-fold 교차 검증을 실행한 결과는 다음과 같습니다:
+
 ```
                      mean[MAE]  std[MAE]   mean[MSE]  std[MSE]  mean[R2]   std[R2]  mean[RMSE]  std[RMSE]  mean[RRSE]  std[RRSE]  mean[StdDevAE]  std[StdDevAE]
 model_name                                                                                                                                                     
@@ -33,9 +28,7 @@ XGBoost-meanPop       5.833350  0.013290   66.385235  0.335167  0.736933  0.0016
 XGBoost-meanPop-opt   5.722164  0.007521   64.473070  0.206048  0.744511  0.001108    8.029502   0.012825    0.505458   0.001095        5.632915       0.011055
 
 ```
-We observe a small improvement of the tuned XGBoost model in comparison to the default parameters as used by model `XGBoost-meanPop`.
 
+위 결과를 통해 우리는 `XGBoost-meanPop`에서 조금의 성능 향상을 확인 할 수 있습니다.
 
-<hr>
-
-[Next Step](../step13-deployment/README.md)
+[다음 단계](../step13-deployment/README.md)

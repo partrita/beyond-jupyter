@@ -1,31 +1,18 @@
-# Step 7: Feature Engineering
+# 단계 7: 특성 엔지니어링
 
-If we look at the reality of song popularity, the artist's identity matters more
-than anything: 
-A song by a popular artist is far more likely to be popular than a song by an unpopular/unknown
-artist - even if its attributes are exactly the same otherwise.
-While we could theoretically use the artist's identity as a categorical feature,
-this is hardly practical owing to the very large number of artists.
+노래 인기의 현실을 살펴보면, 아티스트의 신원이 다른 모든 것보다 중요합니다:
 
-In this step, we thus engineer a custom feature that implements the same notion in a
-more practical manner:
-We add as a feature the relative frequency with which *other* songs by the same
-artist (if any) are popular.
-`FeatureGeneratorMeanArtistPopularity` implements this feature and is registered
-under `FeatureName.MEAN_ARTIST_FREQ_POPULAR` in the feature generator registry (see updated module [features](songpop/features.py)).
-The particular semantics necessitate a differentiation between the learning case
-and the inference case:
-  * For the inference case, we can simply use the relative frequency we observed
-    for the artist in the entire training set.
-  * For the learning case, we must exclude the current data point (as including it  
-    would constitute an obvious data leak).
+인기 있는 아티스트의 노래는 그렇지 않은/알려지지 않은 아티스트의 노래보다 훨씬 더 인기가 있을 가능성이 높습니다. 그 노래의 특성이 그 외에 정확히 같다 하더라도 말이죠. 이론적으로 아티스트의 신원을 범주형 특성으로 사용할 수 있지만, 아주 많은 수의 아티스트로 인해 이는 실용적이지 않습니다.
 
-In either case, it is then possible for the feature to be undefined:
-  * During inference, the artist in question may not have appeared in the training set.
-  * During training, an artist may have but a single song in the training set.
+따라서 이번 단계에서는 더 실용적인 방식으로 이 개념을 구현하는 사용자 지정 특성을 엔지니어링합니다: *동일한* 아티스트의 *다른* 노래가 인기 있는 경우의 상대적 빈도를 특성으로 추가합니다. `FeatureGeneratorMeanArtistPopularity`가 이러한 특성을 구현하고, 특성 생성기 레지스트리에 `FeatureName.MEAN_ARTIST_FREQ_POPULAR`로 등록됩니다 (갱신된 모듈 [features](songpop/features.py) 참조). 특정 의미론적 요구 사항으로 인해 학습 케이스와 추론 케이스 사이에 구별이 필요합니다:
+  - 추론 케이스의 경우, 우리는 훈련 세트 전체에서 관측한 아티스트의 상대적 빈도를 단순히 사용할 수 있습니다.
+  - 학습 케이스의 경우, 현재 데이터 포인트를 제외해야 합니다 (포함하면 명백한 데이터 누수가 발생합니다).
 
-We use XGBoost's gradient-boosted decision trees as a type of model that explicitly
-supports incomplete data. 
+어느 경우에도 특성이 정의되지 않을 수 있습니다:
+  - 추론 중에는 해당 아티스트가 훈련 세트에 나타나지 않았을 수 있습니다.
+  - 학습 중에는 아티스트가 훈련 세트에 단 하나의 노래만 가지고 있는 경우가 있을 수 있습니다.
+
+우리는 XGBoost의 그래디언트 부스팅 결정 트리를 사용하여 불완전한 데이터를 명시적으로 지원하는 모델의 일종으로 사용합니다.
 
 ```python
     @classmethod
@@ -38,9 +25,10 @@ supports incomplete data.
             .with_name(f"XGBoost{name_suffix}")
 ```
 
-We can add our newly introduced feature via the parameter `add_features` and 
-consider three concrete models: one which uses the old set of features, one which adds the new feature and
-one which uses only the new feature.
+우리가 새롭게 도입한 특성을 `add_features` 매개변수를 통해 추가할 수 있으며, 세 가지 구체적인 모델을 고려해 볼 수 있습니다: 
+1. 이전 특성 집합을 사용하는 모델
+2. 새로운 특성을 추가한 모델
+3. 그리고 새로운 특성만 사용하는 모델.
 
 ```python
     models = [
@@ -51,15 +39,10 @@ one which uses only the new feature.
     ]
 ```
 
-As far as the other models are concerned, we could apply a feature transformation involving
-imputation if we wanted to support the new feature.
+다른 모델들은 새로운 특성을 지원하려면 대체로 적합한 특성 변환을 적용할 수 있습니다. 
 
+## 이번 단계에서 다루는 원칙
 
-## Principles Addressed in this Step
+- 매개변수의 노출
 
-* Expose parametrisation
-
-
-<hr>
-
-[Next Step](../step08-high-level-evaluation/README.md)
+[다음 단계](../step08-high-level-evaluation/README.md)

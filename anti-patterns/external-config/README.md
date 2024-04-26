@@ -1,59 +1,43 @@
-# Needlessly Externalising Configuration
+# 불필요하게 설정을 외부화하기
 
-Parts of the machine learning community have an irrational obsession with external configuration, 
-and it causes a lot of unnecessary work without providing any benefits. 
-The obsession stems, most likely, from the belief that having external configuration is a "best practice" in general.
-We claim that, in many cases, configuration can be replaced with high-level code, which is
-  * more flexible,
-  * more maintainable,
-  * and easier to specify in the first place.
+머신러닝 커뮤니티의 일부는 외부 설정에 대해 이성적이지 못한 집착을 가지고 있으며, 이는 많은 불필요한 작업을 초래하며 어떤 이점도 제공하지 않습니다. 이러한 집착은 외부 설정이 일반적으로 "최선의 방법"이라는 믿음에서 기인한 것으로 보입니다. 우리는 많은 경우에 설정을 고수준 코드로 대체할 수 있다고 주장합니다.
+  - 더 유연합니다.
+  - 더 유지보수가 쉽습니다.
+  - 그리고 처음부터 지정하기가 더 쉽습니다.
 
-## External Configuration Has Its Place
+## 외부 설정은 그 자리에 있습니다
 
-The purpose of configuration is to enable settings to change without requiring the source code to change. 
-This is particularly important if code is executed in different environments and the software needs to adapt to these environments (e.g. by using a different local storage folder, using a different database or different access credentials). 
-In such cases, it wouldn't be practical to have to create differently parametrised versions of the software; 
-it makes much more sense to make the software access exchangeable configuration instead.
+구성의 목적은 소스 코드를 변경하지 않고 설정을 변경할 수 있게 하는 것입니다. 이것은 코드가 다른 환경에서 실행되고 소프트웨어가 이러한 환경에 적응해야 하는 경우에 특히 중요합니다 (예: 다른 로컬 저장소 폴더 사용, 다른 데이터베이스 또는 다른 액세스 자격 증명 사용). 
+이러한 경우에는 소프트웨어의 다른 매개변수화된 버전을 만들어야 한다면 실용적이지 않을 것입니다. 대신 소프트웨어가 교환 가능한 구성을 액세스하도록 하는 것이 더 합리적입니다.
 
-Valid use cases for external configuration are thus cases where the configuration changes dynamically, i.e. different configurations are applied in order to adapt, in particular, to external conditions.
+따라서 외부 구성의 유효한 사용 사례는 구성이 동적으로 변경되는 경우입니다. 즉, 다른 구성이 적용되어 특히 외부 조건에 적응해야 하는 경우입니다.
 
-## Static External Configuration Is Questionable
+## 정적 외부 구성은 의문스럽습니다
 
-By contrast, the anti-pattern we consider is chiefly concerned with the case where the configuration statically configures an experiment or task. 
-Specifically, if configuration serves to configure *what* a process is doing rather than to provide context settings, we have to ask ourselves why it needs to be *external* to the code! 
-After all, specifying what do is precisely what programming languages are designed for. 
-Therefore, in such a case, we could instead have the configuration in code, and the respective code would never need to change as long as the experiment remained the same. 
-If we wanted to change the experiment, changing the source file is no different from changing the configuration file.
+이와 대조적으로, 우리가 고려하는 안티 패턴은 구성이 정적으로 실험 또는 작업을 구성하는 경우에 주로 관심이 있습니다. 구성이 컨텍스트 설정이 아닌 프로세스가 *무엇을* 하는지를 구성하는 데 사용되는 경우에 특히 그렇습니다. 왜 코드 *외부* 여야 하는지에 대해 스스로 물어봐야 합니다! 
+결국 무엇을 하는지를 명시하는 것은 바로 프로그래밍 언어가 설계된 목적입니다. 따라서 이러한 경우에는 구성 파일 대신 코드에 구성을 넣을 수 있으며, 해당 코드는 실험이 동일한 경우 소스 파일이 변경되지 않는 한 변경되지 않을 것입니다. 실험을 변경하려면 소스 파일을 변경하는 것은 구성 파일을 변경하는 것과 별반 다를 바 없습니다.
 
-If we had several such configurations and thus are defining entirely separate experiments, we might as well use different source files rather than different configuration files. 
-The key question to ask is: What are we really gaining by using configuration files rather than source files?
-In cases where the configuration is static rather than dynamic, do we really need it?
-What are we gaining and what are we losing?
+따라서 여러 이러한 구성이 있고 따라서 완전히 다른 실험을 정의한다면 다른 구성 파일 대신 다른 소스 파일을 사용하는 것이 더 합리적입니다. 물어야 할 핵심 질문은 다음과 같습니다: 왜 구성 파일 대신 소스 파일을 사용하는 것이 좋은 것일까요? 구성이 동적이 아니라 정적인 경우에는 정말 필요할까요? 우리가 얻는 것과 잃는 것은 무엇인가요?
 
-## From Configuration to Code
+## 구성에서 코드로
 
-The primary reason why configuration is deemed necessary is that it is viewed as the only way to make configuration explicit.
-It is, of course, desirable to make key settings controllable in a single, well-defined place, and a typical misconception is that external configuration is the best or even the only way to achieve this.
-If you have followed the rest of our course material, however, it should be clear that it can also be achieved through high-level abstractions which render task specifications entirely declarative.
+구성이 필요하다고 여겨지는 주된 이유는 구성을 명시적으로 만들어야 한다고 여겨지기 때문입니다. 물론 핵심 설정을 단일하고 명확한 장소에서 제어하는 것이 바람직하며, 전형적인 오해는 외부 구성이 이를 달성하는 최상의 또는
 
-Imagine a script such as the following, where each function call stands for a larger piece of code which uses the arguments it receives somewhere:
+ 심지어 유일한 방법이라고 생각하는 것입니다. 그러나 여러분이 우리의 코스 자료를 따랐다면 고수준 추상화를 통해 작업 사양을 완전히 선언적으로 만들 수 있다는 것이 분명해야 합니다.
+
+각 함수 호출이 어딘가에서 받은 인수를 사용하는 더 큰 코드 조각을 나타내는 다음과 같은 스크립트를 상상해보십시오:
 
 ```python
 config = read_config("my_config_file")
-
 initialize()
-
 do_something(config.param1, config.param2)
-
 do_something_in_between()
-
 do_something_else(config.param3)
-
 write_results(config.param4)
 ```
 
-In this case, the configuration serves to define a single place in which all the relevant parameters can be defined.
-We could trivially refactor this as follows and define a function which receives only a configuration object, which in this case, could be a data class (such that all attribute types are well-defined): 
+이 경우에는 구성이 모든 관련 매개변수를 정의할 수 있는 단일한 장소를 정의하는 데 사용됩니다.
+우리는 이를 다음과 같이 쉽게 리팩터링할 수 있으며, 여기에서는 구성 객체만 받는 함수를 정의할 수 있습니다. 이 경우에는 데이터 클래스가 될 수 있습니다(모든 속성 유형이 잘 정의됨).
 
 ```python
 @dataclass
@@ -72,99 +56,82 @@ def run_experiment(config: Config):
     write_results(config.param4)
 ``` 
 
-In the corresponding main script, which could replace the configuration file, we would then simply have:
+대응하는 메인 스크립트에서는 구성 파일을 대체할 수 있습니다. 그러면 다음과 같이 간단하게 작성될 것입니다.
 
 ```python
 
 run_experiment(Config(param1=..., param2=..., param3=..., param4=...))
 ```
 
-In an object-oriented solution, we could go even further and establish a high-level abstraction for the experiment, which encapsulates the configuration and the way in which it is run:
+객체 지향적인 해결책에서는 더 나아가서 실험을 위한 고수준 추상화를 설정할 수 있습니다. 이 추상화는 구성과 실행 방식을 캡슐화합니다.
 
 ```python
 Experiment(param1=..., param2=..., param3=..., param4=...).run_main()
 ``` 
 
-## Reasons to Prefer Code to Configuration
+## 설정을 코드에 저장하는 것을 선호하는 이유
 
-Under the conditions described above, high-level code has the following advantages over external configuration:
+위에서 설명한 조건 하에서, 고수준 코드는 외부 구성보다 다음과 같은 이점을 가집니다.
 
-* **ease of definition**
+- **정의의 용이성**: 실험을 위한 구성을 작성할 때, 완전한 IDE 지원(타입 힌트, 자동 완성 등)을 받게 되어 설정을 지정하기가 쉬워집니다. 또한, 기존의 코드 기반 구성은 (언어의 타입과 독스트링을 통해) 자체 문서화되어 있으므로 이해하기가 더 쉽습니다 (해당 문서는 IDE를 통해 직접 요청할 수 있습니다).
 
-  When writing the configuration for an experiment, you get full IDE support (type hints, auto-completions, etc.), making the configuration easier to specify.
-  Furthermore, existing code-based configurations are self-documenting (through types and docstrings in the language) and thus easier to understand (as the respective documentation can be directly requested via the IDE).
+- **유연성**: Python 코드로 지정된 사양은 Python 언어의 전체 표현력을 사용하고 모든 제어 흐름 구조 및 다른 언어 기능을 적용할 수 있습니다. 따라서 사양은 더 복잡한 형태로 만들어질 수 있습니다 (그럼에도 불구하고 사양의 선언적 특성을 유지합니다).
 
-* **flexibility**
+- **정적 타입 검사**: 많은 사양 오류는 이미 타입 수준에서 나타나며 Python (타입 어노테이션을 사용하여)을 사용하여 구성을 정의하면 타입이 정적 타입 검사기(예: IDE 또는 mypy와 같은 도구)를 통해 확인할 수 있어 사양 오류의 가능성이 크게 줄어듭니다.
 
-  A specification in Python code can use the full expressiveness of the Python language and apply all of its control flow structures and other language features, e.g. subtype polymorphism.
-  The specification can thus take more complex forms (while still maintaining the declarative character of the specification).
+- **유지 관리성**: Python 코드로 지정된 사양은 더 쉽게 유지 관리할 수 있으며, 자동으로 다시 구성하거나 그렇지 않은 변경을 가할 때 설정과 코드 간의 불일치를 유발할 위험 없이 변경할 수 있습니다.
 
-* **static type checking**
+설정은 이러한 이점을 가지지 않으므로 중요한 질문은 다음과 같습니다. 고급 솔루션을 달성하기 위해 설정을 사용해야 할까요? 다른 말로, 설정을 사용하지 않으면 최적의 디자인을 얻을 수 없을까요?
 
-  Many specification errors are already apparent at the type level, and using Python (with type annotations) to define the configuration has the advantage of types being checkable via static type checkers (e.g. IDEs or tools such as mypy), greatly reducing the potential for specification errors.
+구성과 비교했을 때 설정의 단점으로 인해 이러한 질문에 명확한 "예"라는 대답만 있는 경우에만 설정을 사용해야 합니다.
 
-* **maintainability**
+### 예시: Tianshou 고수준 실험
 
-  A specification in Python code is easier to maintain, because it can be more safely refactored (automatically) or otherwise changed without the danger of inducing a mismatch between configuration and code.
-
-
-Configuration has none of these advantages, so the key question to ask is: Is the use of configuration necessary to achieve an elegant solution? In other words: Would not using configuration result in suboptimal design?
-Because of the downsides of configuration when compared to specifications in the programming language, we should only ever use configuration if the answer to these questions is a very clear "yes".
-
-### Example: Tianshou High-Level Experiment
-
-Consider this example from the Tianshou reinforcement learning library, which heavily makes use of the flexibility of the Python language:
-It uses the builder pattern to flexibly configure an experiment; individual arguments can use subtype polymorphism to achieve vastly different behaviour.
-The *entire* code snippet is high-level code which defines the configuration of an experiment.
-Extracting the constants from it would *not* suffice as configuration, as this would fail to maintain the same level of flexibility.
-(Note, however, that even if it was the case that the constant literals sufficed and we could move them to external configuration, we still would not gain anything by doing so!) 
+Tianshou 강화 학습 라이브러리의 이 예시를 고려해 보세요. 이 라이브러리는 Python 언어의 유연성을 적극적으로 활용합니다. 실험을 유연하게 구성하기 위해 빌더 패턴을 사용하며 각 인수는 다형성을 사용하여 크게 다른 동작을 수행합니다.
+*전체* 코드 스니펫은 실험의 구성을 정의하는 고수준 코드입니다. 상수를 추출하는 것만으로는 구성을 충족시키지 못하며, 이는 같은 수준의 유연성을 유지할 수 없습니다. (그러나 상수 리터럴만으로 충족되고 이를 외부 구성으로 이동할 수 있다고 가정하더라도 그럼에도 불구하고 이를 수행함으로써 얻을 것은 없습니다!)
 
 ```python
-    
 experiment = (
-        DQNExperimentBuilder(
-            EnvFactoryRegistered(task="CartPole-v1", seed=0, venv_type=VectorEnvType.DUMMY),
-            ExperimentConfig(
-                persistence_enabled=False,
-                watch=True,
-                watch_render=1 / 35,
-                watch_num_episodes=100,
-            ),
-            SamplingConfig(
-                num_epochs=10,
-                step_per_epoch=10000,
-                batch_size=64,
-                num_train_envs=10,
-                num_test_envs=100,
-                buffer_size=20000,
-                step_per_collect=10,
-                update_per_step=1 / 10,
-            ),
-        )
-        .with_dqn_params(
-            DQNParams(
-                lr=1e-3,
-                discount_factor=0.9,
-                estimation_step=3,
-                target_update_freq=320,
-            ),
-        )
-        .with_model_factory_default(hidden_sizes=(64, 64))
-        .with_epoch_train_callback(EpochTrainCallbackDQNSetEps(0.3))
-        .with_epoch_test_callback(EpochTestCallbackDQNSetEps(0.0))
-        .with_epoch_stop_callback(EpochStopCallbackRewardThreshold(195))
-        .build()
+  DQNExperimentBuilder(
+    EnvFactoryRegistered(
+      task="CartPole-v1", seed=0, venv_type=VectorEnvType.DUMMY),
+      ExperimentConfig(
+        persistence_enabled=False,
+        watch=True,
+        watch_render=1 / 35,
+        watch_num_episodes=100,
+        ),
+      SamplingConfig(
+          num_epochs=10,
+          step_per_epoch=10000,
+          batch_size=64,
+          num_train_envs=10,
+          num_test_envs=100,
+          buffer_size=20000,
+          step_per_collect=10,
+          update_per_step=1 / 10,
+      ),
+    ).with_dqn_params(
+      DQNParams(
+        lr=1e-3,
+        discount_factor=0.9,
+        estimation_step=3,
+        target_update_freq=320,
+        ),
+      ).with_model_factory_default(hidden_sizes=(64, 64))
+      .with_epoch_train_callback(EpochTrainCallbackDQNSetEps(0.3))
+      .with_epoch_test_callback(EpochTestCallbackDQNSetEps(0.0))
+      .with_epoch_stop_callback(EpochStopCallbackRewardThreshold(195))
+      .build()
     )
     experiment.run()
 ```
 
-As a simple example, consider how we could, using external configuration, handle variations of this experiment where  
+간단한 예로, 외부 구성을 사용하여 이 실험의 변형을 다루는 방법을 고려해 보겠습니다.
 
- * `with_model_factory_default` shall not be called at all (because we don't want to specify non-default hidden sizes)
- * `with_model_factory(MyModelFactory())` shall be called instead of `with_model_factory_default`.
+- `with_model_factory_default`가 호출되지 않아야 하는 경우(비표준 은닉 크기를 지정하고 싶지 않은 경우)
+- `with_model_factory(MyModelFactory())`가 `with_model_factory_default` 대신 호출되어야 하는 경우.
 
-The solutions to both problems would not be entirely trivial to handle with configuration and would necessitate a differentiation of the various cases in the code that interprets the configuration. 
-When using a Python script, however, the changes would be completely straightforward and clean. 
+두 가지 문제에 대한 해결책은 외부 구성을 사용하여 처리하기가 완전히 간단하지 않으며, 구성을 해석하는 코드에서 다양한 경우를 구분해야 할 수 있습니다. 그러나 Python 스크립트를 사용할 때는 변경 사항이 완전히 간단하고 깔끔할 것입니다.
 
-Most importantly, think, once again, about whether there is anything you concretely gained
-by using configuration in the first place; and if anything, is it worth sacrificing the advantages we listed above?
+가장 중요한 것은 다시 한번, 처음부터 설정을 사용하여 구체적으로 얻은 것이 있는지 고려하는 것입니다. 그리고 무엇보다도, 우리가 위에서 나열한 이점을 희생해야 할 가치가 있는지 생각해 보세요.

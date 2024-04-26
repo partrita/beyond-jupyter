@@ -2,7 +2,7 @@
 
 먼저 수정된 스크립트 [run_regressor_evaluation.py](run_regressor_evaluation.py)를 살펴봅니다.
 
-첫 번째 단계에 평가 로직을 함수로 선언합니다.
+첫 번째 단계에 평가 로직을 함수로 선언했습니다.
 
 ```python
 def evaluate_model(model, X_train, y_train, X_test, y_test):
@@ -12,7 +12,7 @@ def evaluate_model(model, X_train, y_train, X_test, y_test):
     print(f"{model}: MAE={mae:.1f}")
 ```
 
-이를 통해 이 스크립트 내에서 (그리고 아마도 이를 넘어서) 함수를 재사용할 수 있게 되어 코드 중복을 제거하고 유지보수성을 높일 수 있습니다.
+이를 통해 이 스크립트 내에서 함수를 재사용할 수 있게 되어 코드 중복을 제거하고 유지보수성을 높일 수 있습니다.
 
 ```python
 # 모델 평가하기

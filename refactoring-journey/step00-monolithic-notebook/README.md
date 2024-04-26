@@ -1,84 +1,43 @@
-# Step 0: A Monolithic Notebook
+# 단계 0: 단일 노트북
 
-The scenario is the following: 
-You are working on a new machine learning task and start to investigate your data set. 
-Specifically, the task is to build a model that can predict the popularity of a song
-from the attributes of the song.
-For the data analysis phase, a Jupyter notebook is certainly a good tool, 
-as it allows us to store the analysis results (such as plots and tables) in conjunction 
-with the code that produced it and thus represents a self-contained artifact
-for the analysis that we can go back to in order to make informed modelling decisions
-later in the project.
+예시를 들려고 하는 상황은 이렇습니다.
+- 새로운 기계 학습 프로젝트에 착수하여 데이터을 조사하고 있습니다. 구체적으로는 노래의 속성으로 노래의 인기를 예측할 수 있는 모델을 구축하는 작업입니다.
+- 데이터 분석 단계에서는 Jupyter 노트북이 확실히 좋은 도구입니다.
+- 분석 결과(예: 플롯 및 테이블)를 코드와 함께 저장할 수 있으므로 분석에 대한 결과물이 되어 나중에 결정을 내릴 때 참고할 수 있습니다.
 
+## 문제점
 
-## Problems
+기계 학습 모델을 정의하고 평가할 때 Jupyter를 계속 사용하는 것이 좋아 보일 수 있습니다. 그러나  이런 방식으로 작업하면 과거 결과를 추적하고 이전 및 새로운 구현을 동시에 지원하는 설정을 유지하는 능력이 심각하게 제한될 수 있습니다. 다시 말해 실험을 신속하게 수행하면서 지난 결과를 추적하고 이전 및 새로운 구현을 동시에 지원하는 설정을 유지하는 것이 중요합니다.
 
-It may, at first, be tempting to continue to use Jupyter when starting to define and evaluate 
-machine learning models. 
-Unfortunately, this way of working would severely limit our ability to experiment rapidly whilst
-keeping track of past results and maintaining a setup that enables us to simultaneously support
-old and new implementations alike.
-
-Let's assume that we start with the [Jupyter notebook in this folder](spotify-song-popularity-prediction.ipynb), which we have taken
-from Kaggle.
-Here are a few limitations, all of which we shall address in our refactoring journey:
-
-* **The current paradigm is not amenable to experimentation**, as it does not facilitate the execution
-  of experiments where parts of the implementation vary in some shape or form.
-
-  * If we experimented with different variations of the models by
-    changing the existing code, we obviously lose the old implementation and have no
-    way to compare the old solution to the new one in later experiments (e.g. on different data).
-  * If we experimented with different variations of the models by 
-    adding new code of the same nature, this would result in severe code duplication.
-
-  In essence, we need a way of parametrising our code rather than changing it, and the way
-  to achieve this is through abstractions.
-
-* **The current implementation is inflexiblie both with respect to the data and with 
-  respect to the models**.
-
-  * There is no clearly defined data set (and no respective representation or abstraction).
-    Therefore, experiments with variations of the data set cannot easily be supported.
-  * Data filtering/preprocessing is inextricably linked with model-specific input transformation, 
-    yet it may be highly desirably to change the input representation (and even the set of inputs entirely) for different models.
-  * There is no separation between the features being used and their model-specific representations.
-    Global data preprocessing is inextricably linked with model input preparation.
-      * We can easily use only one set of features for all models.
-      * The feature representation is the same across all models (and therefore is the least common denominator); model-specific capabilities cannot be exploited.
-        Specifically, in our example, categorical features are either not being used or being
-        represented in a rather questionable manner.
-
-* **Results cannot conveniently be tracked** for future reference. They are stored only in the cells'
-  outputs.
-    * If we created variations of our experiments by changing existing parts of the notebook, 
-      we would lose earlier results. 
-      And if we kept extending the notebook, we would, owing to the entirely procedural semantics, 
-      end up with an overly lengthy implementation would eventually become unmanageable.
-    * We cannot easily support multiple experiments, i.e. variations where we change the premise of
-      the prediction or the data set, as there is no notion of an *experiment representation* with which we could associate results.
-    * There is no good way of archiving our results. Git would not really be a good option; if we stored the notebook with the cell outputs, new executions would produce unnecessarily large diffs.
-
-* **The resulting models are not self-contained artifacts** that could be deployed for inference.
-  Even if, in the inference case, we had the exact same features available, there is no object in our
-  current implementation that would transform these inputs to the desired predictions.
-
-* The notebook programming style encourages mistakes, as the workflow often involves reusing
-  past results and the re-execution of individual cells. 
-  This can result in states where a re-execution of the full notebook no longer produces the same 
-  result as the one that was produced by the series of cell executions performed by the programmer.
-
-  Here's an example: There are three different models defined in the notebook. 
-  To evaluate the models, an accuracy score is computed on some test data. 
-  In each case, the variable name of the outcomes is `y_pred`, so the state of the
-  variable depends on the execution order of the cells in the notebook. 
-  This can lead to behaviour as shown here (notice the output indices in the variant on the right),
-
-  ![different_state](res/different_states.png)
-
-  where a re-computation of the accuracy score of the random forest model after having evaluating the decision tree leads to an incorrect output in terms of what is actually printed.
+캐글에서 가져온 다음 [Jupyter 노트북](spotify-song-popularity-prediction.ipynb)을 생각해봅시다. 여기에는 우리가 리펙토링하기에서 살펴본 몇가지 한계가 보입니다.
 
 
-<hr>
+- **현재 패러다임은 실험에 적합하지 않습니다**.
+  - 어떤 형태로든 상황이 변할 수 있는 실험을 수행하기 어렵습니다.
+  - 우리가 기존 코드를 변경하여 모델의 다양한 변형을 실험한다면, 이전 구현을 잃게 되고 나중에 이전 솔루션을 새로운 것과 비교할 수 있는 방법이 없게 됩니다(예: 다른 데이터에서 실험).
+  - 모델의 다양한 변형을 실험하기 위해 동일한 성격의 새로운 코드를 추가한다면, 이는 심각한 코드 중복을 초래할 것입니다. 본질적으로, 우리는 코드를 변경하는 대신 코드를 매개변수화하는 방법이 필요하며, 이를 실현하는 방법은 추상화입니다.
 
-[Next Step](../step01-python-script/README.md)
+- **현재 구현은 데이터와 모델 모두에 대해 유연하지 않습니다**.
+  - 명확하게 정의된 데이터 세트가 없습니다(및 이에 대한 표현 또는 추상화가 없음). 따라서 데이터 세트의 다양한 변형에 대한 실험은 쉽게 지원되지 않습니다.
+  - 데이터 필터링/전처리는 모델별 입력 변환과 불가분적으로 연결되어 있지만, 다른 모델에 대해 입력 표현(심지어 입력 집합 전체도)을 변경하는 것이 매우 바람직할 수 있습니다.
+  - 사용되는 특성과 해당 모델별 표현 사이에 구분이 없습니다.
+    - 모든 모델에 동일한 특성 세트를 사용할 수 있습니다.
+    - 특성 표현은 모든 모델에서 동일합니다(따라서 가장 보편적인 것이며, 모델별 기능을 활용할 수 없습니다). 특히, 예시에서 범주형 특성은 사용되지 않거나 매우 의문스러운 방식으로 표현됩니다.
+
+- **결과를 편리하게 추적할 수 없습니다**. 결과는 셀의 출력에만 저장됩니다.
+  - 우리가 노트북의 기존 부분을 변경하여 실험의 다양한 변형을 생성한다면, 이전 결과를 잃게 될 것입니다.
+    그리고 노트북을 계속 확장한다면, 완전히 절차적 의미 때문에 매우 긴 구현이 되고 결국 관리하기 어려워질 것입니다.
+  - 우리는 실험을 지원하기 위해 여러 실험을 쉽게 지원할 수 없습니다. 즉, 예측의 전제나 데이터 세트를 변경하는 변형이 없습니다.
+    결과를 연결할 수 있는 *실험 표현* 개념이 없기 때문입니다.
+  - 결과를 보관하는 좋은 방법이 없습니다. Git은 좋은 옵션이 아닐 것입니다. 노트북을 셀 출력과 함께 저장한다면, 새로운 실행은 불필요하게 큰 차이를 만들어냅니다.
+
+- **생성된 모델은 추론을 위해 배포할 수 있는 자체 포함된 아티팩트가 아닙니다**. 실제로, 추론 경우에도 정확히 동일한 특성을 사용할지라도, 현재 구현에서는 이러한 입력을 원하는 예측으로 변환할 수 있는 객체가 없습니다.
+
+- 노트북 프로그래밍 스타일은 과거 결과를 재사용하고 개별 셀을 다시 실행하는 것을 통해 실수를 유발할 수 있습니다. 이는 종종 노트북의 전체 다시 실행이 프로그래머가 수행한 셀 실행 시리즈로 생성된 결과와 동일한 결과를 더 이상 생성하지 않는 상태로 이어질 수 있습니다.
+  - 예를 들어, 노트북에는 세 가지 다른 모델이 정의되어 있습니다. 모델을 평가하기 위해 일부 테스트 데이터에서 정확도 점수가 계산됩니다. 각 경우에, 결과 변수의 변수 이름은 `y_pred`입니다. 따라서 변수의 상태는 노트북에서 셀 실행 순서에 따라 달라집니다. 이로 인해 여기 (오른쪽 변형의 출력 색인에 주목하세요)에서와 같은 동작이 발생할 수 있습니다.
+
+![different_state](res/different_states.png)
+
+만약 여기서 의사 결정 트리를 평가한 후 랜덤 포레스트 모델의 정확도 점수를 다시 계산하면 잘못된 출력 결과를 얻게 됩니다.
+
+[다음 단계](../step01-python-script/README.md)

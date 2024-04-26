@@ -1,22 +1,11 @@
-# Step 3: Refactoring
+# Step 3: 리팩터링
 
-Now is a good time to improve the structure of the code. 
+이제 코드 구조를 개선할 때입니다. `songpop` 패키지를 만들어서 [`data`](songpop/data.py) 모듈을 포함시킵니다. 이 모듈은 데이터셋과 직접적으로 관련된 모든 로직을 포함합니다. 다음 단계에서는 전용 목적을 가진 추가 모듈을 만들 것입니다. 실제 상황에서는 이러한 구조를 처음부터 채택했을 것입니다.
 
-We create a package `songpop` containing the module [`data`](songpop/data.py), 
-which contains all logic directly related to the dataset.
-In subsequent steps, we shall create further modules with dedicated purposes.
-In a more realistic setting, we would likely have adopted such a structure 
-from the very beginning.
+업데이트된 [메인 스크립트](run_classifier_evaluation.py)는 주로 즉각적인 실험에만 중점을 둡니다.
 
-The updated [main script](run_classifier_evaluation.py) is focussed chiefly on the 
-experiment to execute.
+## 이번 단계에서 다룬 원칙
 
+- 재사용 가능한 구성 요소 만들기
 
-## Principles Addressed in this Step
-
-* Develop reusable components
-
-
-<hr>
-
-[Next Step](../step04-model-specific-pipelines/README.md)
+[다음 단계](../step04-model-specific-pipelines/README.md)
