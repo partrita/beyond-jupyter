@@ -1,138 +1,66 @@
-# Guiding Principles
+## 목표
 
-## Goals
+설명된 원칙들은 다음을 위해 사용됩니다.
 
-The principles outlined in the following serve to foster
+- **재현성**: 언제든지 이전 결과를 재현할 수 있고 실험의 전체 매개변수화를 코드를 검사하지 않고도 알 수 있음
+- **유지보수성**: 새로운 요구 사항에 쉽게 적응하거나 문제의 새로운 변형을 처리하기 위해 쉽게 확장할 수 있는 코드 작성
+- **효율성**: 비효율적인 작업을 피함으로써 발생하는 불필요한 작업 회피하기 위함
+- **일반성**: 프로토타입/실험 단계 이상으로의 확장 가능성을 위함
 
-- **reproducibility**
-  (always being able to reproduce a past result and knowing the full parametrisation of an experiment without 
-  having to inspect the code)
-- **maintainability**
-  (writing code that can easily be adapted to new requirements or be extended to handle new variations of a 
-  problem)
-- **efficiency**
-  (avoiding unnecessary work that is due to a suboptimal workflow)
-- **generality**
-  (enabling applications beyond the particular context of the prototyping/experimentation phase)
+## 원칙
 
-## Principles
+### 비판적 사고
 
-### Think Critically
+적절한 실험적 설정을 선택하여 문제를 올바른 규범적 문제로 매핑하기 위해 비판적이고 분석적으로 사고합니다. 이전에 문제의 타당성을 의심하고 필요한 경우 기대치를 관리합니다.
 
-Think critically & analytically in order to map the problem at hand to the right canonical problem, 
-choosing an appropriate experimental setup. 
-Before that, question the validity of the problem and manage expectations if necessary.
+- 주어진 데이터를 비판적으로 분석하고 그 결함과 (작업별) 제한 사항을 인식합니다.
+- 관찰 가능한 출력이 주어진 특성의 함수가 될 수 있는지 직관적으로 합리적인지에 대해 의문을 제기합니다.예를 들어, 중요한 속성이 누락된 경우, 이를 명확하게 전달하고 고객의 기대치를 관리합니다.
+- 현재의 문제를 적합한 규범적 문제로 매핑하고 해당하는 실험적 설정을 선택합니다.
+  - 의도된 미래 응용 프로그램을 적절하게 시뮬레이션하는 실험적 설정을 사용합니다 (예: 데이터에 시간적 측면이 있고 최종 모델이 미래 데이터에 적용되어야 하는 경우, 모델 성능을 적절하게 평가하기 위해 시간적 분할/중첩 교차 검증을 사용합니다).
+  - 특성 표현 및 모델의 이용 가능성에 대해 비판적으로 생각합니다.
+  - 필요한 정보를 적절하게 결합할 수 있는 모델/모델 구조를 선택합니다.
+  - 예를 들어, 문제의 맥락에서 의미 있는 정보를 결합하는 방법에 대한 직관적인 아이디어가 있는 경우, 이 개념을 지원하는 모델/모델 구조를 사용하거나 자체적으로 표현을 구성할 수 없는 모델에 필요한 정보를 제공하는 특성을 엔지니어링합니다.
 
-- Critically analyse the data you are given and be aware of its flaws and (task-specific) limitations.
-- For a supervised machine learning task, where the task is to learn a function, 
-  is it even intuitively reasonable that the desired outputs can indeed be a function of the features 
-  that are available to you? 
-  If, for example, you are missing critical attributes, communicate this clearly and manage your customers’
-  expectations.
-- Map the problem at hand to a suitable canonical problem and choose your experimental setup accordingly
-    - Use an experimental setup that appropriately simulates the intended future application 
-      (e.g. if there is a temporal aspect to your data and the final model is to be applied to future data, 
-      use temporal splits/nested cross-validation to properly evaluate model performance)
-    - Think critically about your feature representations and the ability of models to make use of them.
-    - Select models/model structures that, intuitively, should be able to combine the information as needed. 
-      For instance, if you have an intuitive idea of how pieces of information must be combined in order to be 
-      meaningful  in the context of the problem, use models/model structures that support this notion or 
-      engineer features that provide the necessary information to models that are unable to construct the 
-      representations themselves.
+### 재사용 가능한 구성 요소 개발
 
-### Develop Reusable Components
+프로토타이핑과 제품화 간의 간극을 줄이기 위해 처음부터 다른 맥락에서 재사용될 수 있는 구성 요소를 작성합니다. **잘 정의된 목적을 가진 (작은) 구성 요소를 작성한 다음 이러한 구성 요소를 조합합니다**.
 
-Bridge the gap between prototyping and production by writing components that could be reused in other contexts 
-from the get-go.
-**Write (small) components that serve well-defined purposes**; then compose these components.
+재사용 가능한 구성 요소를 개발하는 것은 본질적으로 **라이브러리**를 개발하는 것을 의미하며, 구현한 모든 작업(머신러닝 실험, 분석, 평가)이 해당 라이브러리를 사용합니다. 구체적인 작업(실행 가능한 스크립트)을 라이브러리 코드와 분리합니다. 전자는 개발 중에 실험적 설정에 매우 특정할 수 있지만, 후자는 일정한 정도로 일반적이어야 합니다. 즉, 라이브러리 수정 없이 다른 사람이 고려한 작업의 변형을 실행할 수 있도록 인터페이스를 제공하여 해당 매개변수화를 가능하게 하고, 제품 환경에서 (잠재적으로) 사용할 수 있어야 합니다.
 
-The development of reusable components essentially means that you will be developing a **library** and that any
-tasks that you implement (machine learning experiments, analyses, evaluations) will make use of that library. 
-Separate your concrete tasks (runnable scripts) from the library code. 
-While the former can be highly specific to your experimental setup during development, the latter should be 
-general to a reasonable degree, i.e. it should
+- 예: 배포된 추론 서비스.
 
-- enable others to run variations of the tasks you considered (without requiring modifications of the library) 
-  by providing interfaces that enable the respective parametrisations, and
-- be (potentially) usable in a production context, e.g. a deployed inference service.
+### 적절한 추상화 요소 찾기
 
-### Find the Right Abstractions
+재사용 가능한 구성 요소를 개발하는 것은 어떤 것이 구성 요소로 구성되어야 하는지에 대한 문제를 제기합니다. **해당 개체와 작업의 본질을 잡아낼 수 있는 적절한 추상화를 찾아내고** 이를 구성 요소로 변환하세요. 도메인 주도 설계와 객체지향 프로그래밍 접근법을 적용하여 자연스러운 매핑을 찾을 수 있습니다. 해당 개념이 아직 익숙하지 않다면 소프트웨어 디자인을 공부해보세요.
 
-The development of reusable components raises the question of what should constitute a component. 
-**Find the right abstractions** **that capture the essence of the entities and tasks at hand** and turn them 
-into components. 
-Natural mappings can be found by applying domain-driven design with an object-oriented programming approach. 
-Study software design if the respective concepts are yet unfamiliar.
+### 코드와 데이터의 버전 관리
 
-### Version Code, Version Data
+작성한 모든 코드에 대해 **버전 관리 시스템을 사용**하고, 각 코드가 어떤 구체적인 결과를 생성했는지 명확하게 해야 합니다. 중요한 결과물을 생성하는 데 사용된 코드는 항상 버전 관리 시스템에 커밋되어야 합니다 (또는 추적 도구를 사용하여 실험 결과와 함께 저장되어야 합니다).
 
-**Use a versioning system for all the code you write**, and make sure that it is clear which version of the code
-produced which concrete results. 
-Code that was used to produce important results should always be committed to the versioning system (or should 
-otherwise be stored along with the experiment’s results, e.g. using tracking tools).
+실험을 재현하기 위해서는 사용된 데이터에 대한 모호성이 없어야 합니다. 프로젝트 진행 중에 데이터가 변경되고 이전 결과가 여전히 유효한 경우, **데이터 세트의 모든 버전이 명확하게 정의**되어 추가 실험에 재사용될 수 있어야 합니다. 의심스러운 경우, 이전 결과물을 모두 관련성이 있는 것으로 간주하세요 (미래에 무엇이 발생할지 알 수 없으므로 이전 결과의 품질이 갑자기 달성할 수 없는 수준으로 변할 수 있습니다. 이 변화가 데이터 때문인지 결정하고 싶을 것입니다). 예를 들어, 데이터 자체를 명확히 정의된 위치에 저장하거나 실제 데이터를 직접 재구성할 수 있는 표현으로 저장할 수 있습니다.
 
-To render experiments reproducible, there must also be no ambiguity with respect to the data that was used. 
-If the data changes during the course of the project and old results are still relevant, 
-**make sure that all versions of your dataset are clearly defined** and can be reused for further experiments. 
-If in doubt, consider all old results as relevant (as you never know what might happen in the future; 
-the quality of old results may suddenly become unattainable and you will want to determine whether the change 
-is due to the data). 
-For instance, you may save the data itself to well-defined locations or save representations from which the 
-actual data can straightforwardly be reconstructed.
+### 선언적 의미론 우선
 
-### Favour Declarative Semantics
+**어떻게** 작업을 수행하는 것을 추상화한 고수준 코드(절차적 의미론)를 작성하는 대신에, 간결한 방식으로 *무엇* 을 수행해야 하는지에 중점을 둔 고수준 코드(선언적 의미론)를 주로 작성하세요. 고수준 코드는 이해하기 쉬워야 하고 매개변수화하기 쉬워야 하며, 몇 줄의 코드로 많은 변형 실험을 생성할 수 있도록 해야 합니다.
 
-**Write high-level code that abstracts away from** **how** **things are done** (procedural semantics) and that 
-instead focuses mainly on *what* shall be done in a concise manner (declarative semantics).
+### 특성 파악
 
-High-level code should be easy to understand and parametrise, facilitating the generation of many variations of
-an experiment by writing but a few lines of code.
+모델별로 특성의 모델별 표현(예: 특정 인코딩 또는 정규화)이 필요한 여러 유형의 모델을 적용할 때, 입력 특성의 속성을 명시적으로 표현하여 각 모델의 요구에 따라 자동으로 변환할 수 있도록 해야 합니다. 가능한 한 필요한 데이터 변환을 각 모델과 강하게 연관시키는 것이 이상적입니다.
 
-### Know Your Features
+많은 딥러닝 응용 프로그램에서는 데이터가 픽셀 또는 문자와 같은 특정 유형의 저수준 특성으로 구성되어 있으므로 이러한 접근이 필요하지 않을 수 있지만, 구조화된 데이터를 처리할 때 매우 유익할 수 있습니다.
 
-When applying multiple types of models that require model-specific representations of features (e.g. certain 
-encodings or normalisations), explicitly represent the properties of input features in order to be able to 
-transform them according to each model’s needs in an automated manner.
-Ideally, strongly associate the necessary data transformations with each model.
+### 상세하게 로그 기록
 
-In many deep learning applications, where the data is composed entirely of low-level features of one particular
-kind (e.g. pixels or characters), this is not necessary, but when dealing with structured data, it can be highly
-beneficial.
+로그 기록 프레임워크(`print`문은 아님)를 사용하여 코드에 로그 문을 추가하여 코드가 정확히 무엇을 하는지를 추적할 수 있도록 해야 합니다. 모든 중요한 단계와 관련된 모든 매개변수를 로그에 기록하세요. 개발의 다른 필요/단계를 고려하고 각 작업의 로그를 주요 결과와 함께 저장하세요.
 
-### Log Extensively
+### 실험 추적
 
-Use a logging framework (*not* print statements) to add log statements to your code that enable you to follow 
-exactly what your code is doing. 
-Log every important step and all the relevant parameters.
-Use different log levels to account for different needs/stages of development.
+해당 문제를 정의하는 개념을 개발하고, 그에 대한 표현을 생성한 다음 모든 실험 결과를 해당 표현과 연결하세요. 특히 머신러닝에서는 문제가 특정 유형의 예측 문제에 의해 정의될 수 있으며, 이는 특정 매개변수(예: 임계값)를 포함할 수 있으며, 또한 사용되는 데이터 집합에 의해 정의될 수 있으며, 이는 추가 매개변수를 포함할 수 있습니다. 각 매개변수의 조합이 우리의 문제를 정의하며, 우리가 생성하는 모든 결과를 해당 문제 표현과 연관시켜야 합니다. (가장 간단한 경우에는 문제를 식별할 수 있는 문자열일 수 있습니다.) 문제 정의를 변경할 때(예: 데이터 집합), 우리는 결과를 다른 문제 표현과 연관시켜야 합니다. 추적 프레임워크는 특정 문제와 관련된 실험을 추적하고 메트릭, 이미지, 로그 파일 등을 기록하는 데 도움이 될 수 있습니다.
 
-Save the logs of each relevant task along with the main results of the task.
+### 매개변수 노출
 
-### Track Experiments
+모델/알고리즘 및 실험에 관련된 모든 구성 요소의 매개변수를 노출하고, 관련된 모든 엔티티에 대해 포괄적인 문자열 표현을 구현하세요. 모든 관련 엔티티/매개변수가 기록되도록 하세요. 완전성은 잠재적으로 중요하지만 간결성은 중요하지 않습니다.
 
-Develop a notion of what defines the problem at hand, create a representation thereof and then associate all 
-experimental results with that representation.
+### 비제어된 무작위성 피하기
 
-Specifically, in machine learning, the problem may be defined by a particular type of prediction problem, which 
-may involve certain parameters (e.g. a threshold), and is furthermore defined by the data set being used, which 
-may involve further parameters. The combination of the respective parameters defines our problem and should have
-a representation that we can then associate all the results we produce with. 
-(The representation can, in the simplest of cases, be a string by which we can identify the problem.) 
-As we change the problem definition (e.g. the data set), we must associate our results with a different problem 
-representation.
-
-Tracking frameworks can assist in the tracking of experiments that are associated with a particular problem and 
-facilitate the recording of metrics, images, log files, etc.
-
-### Expose Parametrisation
-
-Expose the parametrisation of your models/algorithms and of any components that are relevant to your 
-experiments, implementing comprehensive string representations for all the entities involved. 
-Make sure that all relevant entities/parameters are logged. 
-Completeness is potentially important, conciseness is not.
-
-### Avoid Uncontrolled Randomness
-
-When applying randomised algorithms, use fixed random seeds to render results reproducible, but do vary the 
-seed depending on the task and especially for your final evaluations – in order to detect any overfitting/bias 
-that may have resulted from the fixed random seed (e.g. during model selection).
+무작위 알고리즘을 적용할 때 결과를 재현 가능하게 만들기 위해 고정된 무작위 시드를 사용하지만 최종 평가를 위해 작업에 따라 시드를 변경하세요. 이를 통해 모델 선택 중에 고정된 무작위 시드(예: 모델 선택 중에 발생할 수 있는 과적합/편향을 감지하기 위해)로 인한 결과의 오버핏/편향을 감지할 수 있습니다.
